@@ -1,0 +1,11 @@
+# privateinstance
+# Visits - Return Visitors - Quarterly
+
+SELECT DATE_TRUNC(daf.date, 'quarter') AS quarter, COUNT(DISTINCT daf.agentid) AS return_visitors
+  FROM daily_agent_facts daf
+       JOIN agents_retention ar
+       USING (agentid)
+ WHERE daf.type != 'new'
+       AND ar.email NOT LIKE '%@data.world'
+ GROUP BY quarter
+ ORDER BY quarter DESC

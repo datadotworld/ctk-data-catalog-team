@@ -1,0 +1,10 @@
+# privateinstance
+# Tops - Bookmarks
+# Last updated September, 2022
+
+SELECT l.partyid as agentid, a.displayname, a.email, count(*) as bookmarks
+FROM likes l 
+  JOIN agents a
+    ON l.partyid = a.agentid
+group by l.partyid, a.displayname, a.email
+order by bookmarks desc 

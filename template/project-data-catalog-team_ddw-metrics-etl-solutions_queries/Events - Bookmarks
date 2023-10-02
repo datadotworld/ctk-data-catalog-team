@@ -1,0 +1,73 @@
+# privateinstance
+# Events - Bookmarks
+# Last updated October, 2022
+
+WITH catalogresources AS (
+  SELECT 
+    created::DATE AS date
+    , partyid AS agentid
+    , REGEXP_EXTRACT(resource, '[^:]*:[^/]*/([^/]*)/.*') AS owner
+    , resourceid
+    , resourcetype AS bookmarked_resourcetype
+  FROM likes 
+  WHERE resourcetype = 'catalogResource'
+),
+comments AS (
+  SELECT 
+    created::DATE AS date
+    , partyid AS agentid
+    , REGEXP_EXTRACT(resource, '[^/]*/([^/]*)/.*') AS owner
+    , REGEXP_EXTRACT(resource, '[^/]*/(.*)') AS resourceid
+    , resourcetype AS bookmarked_resourcetype
+  FROM likes  
+  WHERE resourcetype = 'comment'
+),
+datasetinsights AS (
+  SELECT 
+    created::DATE AS date
+    , partyid AS agentid
+    , REGEXP_EXTRACT(resource, '[^:]*:([^/]*)/.*') AS owner
+    , resourceid
+    , resourcetype AS bookmarked_resourcetype
+  FROM likes
+  WHERE resourcetype = 'datasetInsight'
+),
+datasets AS (
+  SELECT 
+    created::DATE AS date
+    , partyid AS agentid
+    , REGEXP_EXTRACT(likes.resourceid, '(.*)/.*') AS owner
+    , resourceid
+    , resourcetype AS bookmarked_resourcetype
+  FROM likes  
+ WHERE resourcetype = 'dataset'
+),
+unioned AS (
+    SELECT *
+    FROM catalogresources 
+        UNION
+    SELECT *
+    FROM comments
+        UNION
+    SELECT *
+    FROM datasetinsights
+        UNION
+    SELECT *
+    FROM datasets
+),
+add_email AS (
+  SELECT 
+    u.date 
+    , u.agentid
+    , a.displayname
+    , a.email
+    , u.owner
+    , u.resourceid
+    , u.bookmarked_resourcetype  
+  FROM unioned u LEFT JOIN agents a
+  USING (agentid)
+)
+
+SELECT *
+FROM add_email
+ORDER BY date DESC

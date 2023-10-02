@@ -1,0 +1,14 @@
+# privateinstance
+# Tops - Dataset Project Creation
+# Last updated September, 2022
+
+WITH temp AS (
+    SELECT REGEXP_EXTRACT(createdby, '.*:(.*)') AS agentid, COUNT(created) AS n
+      FROM datasets
+     GROUP BY createdby
+)
+SELECT t.agentid, a.displayname, a.email, t.n AS datasets_created
+  FROM temp t
+       JOIN agents a
+       USING (agentid)
+ ORDER BY datasets_created DESC

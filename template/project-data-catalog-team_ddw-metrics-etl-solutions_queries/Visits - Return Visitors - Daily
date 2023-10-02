@@ -1,0 +1,12 @@
+# privateinstance
+# Visits - Return Visitors - Daily
+# Last updated September, 2022
+
+SELECT daf.date, COUNT(*) AS return_visitors
+  FROM daily_agent_facts daf
+       JOIN agents_retention ar
+       USING (agentid)
+ WHERE daf.type != 'new'
+       AND ar.email NOT LIKE '%@data.world'
+ GROUP BY daf.date
+ ORDER BY daf.date DESC

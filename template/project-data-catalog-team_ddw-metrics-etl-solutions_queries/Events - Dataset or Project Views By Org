@@ -1,0 +1,17 @@
+# privateinstance
+# Events - Dataset or Project Views By Org
+
+WITH filtered AS (
+    SELECT date,
+           REGEXP_EXTRACT(urlpath, '/(.*)/.*') AS owner,
+           REGEXP_EXTRACT(urlpath, '/.*/(.*)') AS resource
+     FROM pageviews
+     WHERE REGEX(urlpath, '(/[a-z0-9-]*/[a-z0-9-]*)$')
+           AND (raw:properties.title::STRING LIKE '%dataset%'
+           OR raw:properties.title::STRING LIKE '%project%')
+)
+
+SELECT owner AS org, COUNT(*) AS views
+  FROM filtered
+ GROUP BY owner
+ ORDER BY views DESC

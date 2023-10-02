@@ -1,0 +1,11 @@
+# privateinstance
+# Tops - Most Bookmarked Resources
+
+SELECT regexp_extract(resourceid, '(.*)/.*') as owner, 
+       regexp_extract(resourceid, '.*/(.*)') as resource,
+       resourcetype, 
+       count(*) as bookmarks
+FROM likes
+where resourceid != 'topic'
+group by resourceid, resourcetype 
+order by bookmarks desc

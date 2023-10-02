@@ -1,0 +1,14 @@
+# privateinstance
+# Visits - Unique Visitors - All Time List
+# Last updated September, 2022
+
+WITH n_days AS (
+    SELECT agentid, COUNT(*) active_days
+      FROM daily_agent_facts
+     GROUP BY agentid
+)
+SELECT n.agentid, ar.email, ar.displayname, n.active_days
+  FROM n_days n
+       JOIN agents_retention ar
+       USING (agentid)
+ ORDER BY n.active_days DESC

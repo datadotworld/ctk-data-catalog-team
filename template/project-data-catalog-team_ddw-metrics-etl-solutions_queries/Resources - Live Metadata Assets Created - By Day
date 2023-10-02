@@ -1,0 +1,6 @@
+# privateinstance
+# Resources - Live Metadata Assets Created - By Day
+
+SELECT date, owner, asset, live_assets_created, total_assets_created, cumulative_total_assets, cumulative_live_assets
+FROM daily_dwec_asset_facts 
+ORDER BY date DESC

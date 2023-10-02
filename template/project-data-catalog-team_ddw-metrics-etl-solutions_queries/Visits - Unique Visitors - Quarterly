@@ -1,0 +1,11 @@
+# privateinstance
+# Visits - Unique Visitors - Quarterly
+# Last updated September, 2022
+
+    SELECT DATE_TRUNC(daf.date, 'quarter') AS quarter, COUNT(DISTINCT daf.agentid) AS unique_visitors
+  FROM daily_agent_facts daf
+       JOIN agents_retention ar
+       USING (agentid)
+ WHERE ar.email NOT LIKE '%@data.world'
+ GROUP BY quarter
+ ORDER BY quarter DESC

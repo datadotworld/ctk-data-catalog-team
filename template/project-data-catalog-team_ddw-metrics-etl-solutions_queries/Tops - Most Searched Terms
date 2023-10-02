@@ -1,0 +1,7 @@
+# privateinstance
+# Tops - Most Searched Terms
+
+SELECT search_value, search_type, SUM(search_count) AS n
+  FROM daily_search_facts
+ GROUP BY search_value, search_type
+ ORDER BY n DESC

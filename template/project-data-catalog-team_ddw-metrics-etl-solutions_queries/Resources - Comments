@@ -1,0 +1,21 @@
+# privateinstance
+# Resources - Comments
+
+WITH results AS (
+    SELECT resourcetype,
+           CASE resourcetype
+             WHEN = "datasetInsight" THEN REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)/(.*)", 2)
+             ELSE REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)", 2)
+           END AS owner,
+           CASE resourcetype
+             WHEN = "datasetInsight" THEN REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)/(.*)", 3)
+             ELSE REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)", 3)
+           END AS resourceid,
+           created, REGEXP_EXTRACT(createdby, "(.*):(.*)", 2) AS commenter
+      FROM comments
+)
+SELECT  results.commenter as agentid, results.owner, results.resourceid as resource,
+      concat(owner, '/', resourceid) as resourceid, results.resourcetype,
+        cast(results.created as date) as created_date
+  FROM results
+    order by created_date desc

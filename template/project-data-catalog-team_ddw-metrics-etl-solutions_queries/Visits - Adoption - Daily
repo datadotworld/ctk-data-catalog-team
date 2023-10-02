@@ -1,0 +1,57 @@
+# privateinstance
+# Visits - Adoption - Daily
+# Last updated September, 2022
+
+WITH daf_reduced AS (
+    SELECT DISTINCT daf.date, daf.type, daf.ui_events, daf.api_events, daf.agentid
+      FROM daily_agent_facts daf
+           JOIN agents_retention ar
+           USING (agentid)
+     WHERE ar.email NOT LIKE '%@data.world'
+),
+user_days_temp AS (
+    SELECT date, COUNT(*) AS user_days
+      FROM daf_reduced
+     GROUP BY date
+),
+return_days_temp AS (
+    SELECT date, COUNT(*) AS return_days
+      FROM daf_reduced
+     WHERE type != 'new'
+     GROUP BY date
+),
+new_days_temp AS (
+    SELECT date, COUNT(*) AS new_days
+      FROM daf_reduced
+     WHERE type = 'new'
+     GROUP BY date
+),
+rad AS (
+    SELECT DISTINCT daf.date, daf.agentid
+      FROM daily_agent_facts daf
+           JOIN agents_retention ar
+           USING (agentid)
+     WHERE daf.api_events + daf.ui_events > 10
+           AND daf.type != 'new'
+           AND ar.email NOT LIKE '%@data.world'
+),
+rads_grouped AS (
+    SELECT date, COUNT(*) AS rads
+      FROM rad
+     GROUP BY date
+)
+SELECT u.date,
+       IF(user_days IS NULL, 0, user_days) AS user_days,
+       IF(return_days IS NULL, 0, return_days) AS return_days,
+       IF(new_days IS NULL, 0, new_days) AS new_days,
+       ROUND(IF(new_days IS NULL, 0, new_days) / IF(user_days IS NULL, 0, user_days) * 100, 1) AS percent_new,
+       IF(rads IS NULL, 0, rads) AS rads,
+       ROUND(IF(rads IS NULL, 0, rads) / IF(user_days IS NULL, 0, user_days) * 100, 1) AS percent_rad
+  FROM user_days_temp u
+       FULL OUTER JOIN return_days_temp
+       USING (date)
+       FULL OUTER JOIN new_days_temp
+       USING (date)
+       FULL OUTER JOIN rads_grouped
+       USING (date)
+ ORDER BY u.date DESC

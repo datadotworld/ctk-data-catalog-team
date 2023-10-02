@@ -1,0 +1,19 @@
+# privateinstance
+# Membership - Current By Org
+# Last updated September, 2022
+
+WITH dates AS (
+    SELECT daf.agentid, a.email, a.displayname, MIN(daf.date) AS startdate, MAX(daf.date) AS lastseen
+      FROM daily_agent_facts  daf
+      left join agents a USING (agentid)
+     GROUP BY daf.agentid, a.email, a.displayname
+),
+auths AS (
+    SELECT partyid as agentid, REGEXP_EXTRACT(resourceid, '(.*)/(.*)', 1) as org, level AS auth_level, visibility, updated::DATE AS date_auth_updated
+    from authorizations 
+      where resourcetype = 'group'
+)
+SELECT auths.agentid, d.displayname, d.email, auths.org, auths.auth_level, auths.visibility, auths.date_auth_updated, d.startdate, d.lastseen
+  FROM auths 
+  left join dates d using(agentid)
+ ORDER BY agentid, org

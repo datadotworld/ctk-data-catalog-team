@@ -1,0 +1,27 @@
+# privateinstance
+# Visits - Unique Visitors - Daily 
+# Last updated September, 2022
+
+WITH temp AS (
+    SELECT daf.date, daf.agentid, daf.pageviews
+      FROM daily_agent_facts daf
+           JOIN agents_retention ar
+           USING (agentid)
+     WHERE ar.email NOT LIKE '%@data.world'
+),
+temp_unique_visitors AS (
+    SELECT date, COUNT(*) AS unique_visitors
+      FROM temp
+     GROUP BY date
+),
+temp_single_pageview AS (
+    SELECT date, COUNT(*) AS n_single_pageview
+      FROM temp
+     WHERE pageviews = 1
+     GROUP BY date
+)
+SELECT date, unique_visitors, n_single_pageview, n_single_pageview / unique_visitors * 100 AS pct_single_pageview
+  FROM temp_unique_visitors
+       JOIN temp_single_pageview
+       USING (date)
+ ORDER BY date DESC

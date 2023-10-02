@@ -1,0 +1,12 @@
+# privateinstance
+# Tops - Most Requested Resources
+# Last updated September, 2022
+
+SELECT REGEXP_EXTRACT(a.resourceid, '(.*)/.*') AS owner,
+       REGEXP_EXTRACT(a.resourceid, '.*/(.*)') AS resource,
+       a.resourceid,
+       a.resourcetype,
+       COUNT(*) AS requests
+  FROM authorizationrequests_retention a
+ GROUP BY a.resourceid, a.resourcetype
+ ORDER BY requests DESC

@@ -1,0 +1,17 @@
+# privateinstance
+# Resources - Snapshot Open Datasets And Projects
+
+WITH temp AS (
+    SELECT COUNT(*) AS n_datasets_projects,
+           COUNT(*) FILTER(WHERE visibility = 'OPEN') AS n_open,
+           COUNT(*) FILTER(WHERE visibility = 'DISCOVERABLE') AS n_discoverable
+      FROM datasets
+)
+
+SELECT n_datasets_projects,
+       n_open,
+       n_discoverable,
+       ROUND(n_open / n_datasets_projects * 100, 1) AS pct_open,
+       ROUND(n_discoverable / n_datasets_projects * 100, 1) AS pct_discoverable,
+       ROUND((n_open + n_discoverable) / n_datasets_projects * 100, 1) AS pct_open_or_disc
+  FROM temp

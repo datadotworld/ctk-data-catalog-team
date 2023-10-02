@@ -1,0 +1,7 @@
+# privateinstance
+# Membership - By Date
+# Last updated September, 2022
+
+SELECT date, agentid, email, displayname
+  FROM provisioned_seats_by_date
+ ORDER BY date DESC, agentid

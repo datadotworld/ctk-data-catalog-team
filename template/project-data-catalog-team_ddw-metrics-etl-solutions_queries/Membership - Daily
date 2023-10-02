@@ -1,0 +1,7 @@
+# privateinstance
+# Membership - Daily
+# Last updated September, 2022
+
+SELECT date, provisioned_agents AS members
+  FROM customer_daily_facts
+ ORDER BY date DESC

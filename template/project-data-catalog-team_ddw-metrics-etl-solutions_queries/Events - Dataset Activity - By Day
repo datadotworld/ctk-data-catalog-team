@@ -1,0 +1,7 @@
+# privateinstance
+# Events - Dataset Activity - By Day
+
+SELECT date, ownerid as owner, datasetid AS resource, CONCAT(ownerid, '/', datasetid) AS resourceid,
+       queries_run, queries_saved, downloads, pageviews, bookmarks, auth_requests
+  FROM daily_dataset_facts ddf
+ ORDER BY date DESC

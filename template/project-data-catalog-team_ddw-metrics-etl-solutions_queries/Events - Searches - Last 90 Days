@@ -1,0 +1,17 @@
+# privateinstance
+# Events - Searches
+# Last updated September, 2022
+
+SELECT searches.date,
+       searches.timestamp_utc AS ts,
+       searches.agentid,
+       a.email,
+       a.displayname,
+       searches.action,
+       searches.search_value,
+       searches.num_results,
+       searches.selected_facets
+  FROM searches
+       LEFT JOIN agents_retention a
+       ON searches.agentid = a.agentid
+ ORDER BY ts DESC, agentid

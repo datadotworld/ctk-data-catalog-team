@@ -1,0 +1,28 @@
+# privateinstance
+# Tops - Engagement
+# Last updated September, 2022
+
+WITH rads_days AS (
+    SELECT DISTINCT date, agentid
+      FROM daily_agent_facts
+     WHERE api_events + ui_events > 10
+           AND type != 'new'
+),
+rads AS (
+    SELECT agentid, COUNT(*) AS rads
+      FROM rads_days
+     GROUP BY agentid
+),
+ui_events AS (
+    SELECT DISTINCT daf.agentid, r.rads, SUM(daf.ui_events) AS ui_events, SUM(daf.api_events) AS api_events, MIN(daf.date) AS first_seen, MAX(daf.date) AS last_seen
+      FROM daily_agent_facts daf
+           JOIN rads r
+           USING (agentid)
+     GROUP BY daf.agentid, r.rads
+)
+SELECT ui.agentid, a.email, a.displayname, a.created::DATE AS onboard_date, ui.rads, ui.ui_events, ui.api_events, ui.first_seen, ui.last_seen
+  FROM ui_events ui
+       JOIN agents_retention a
+       USING (agentid)
+ WHERE a.orgmode IS NULL OR a.orgmode = FALSE
+ ORDER BY ui.rads DESC

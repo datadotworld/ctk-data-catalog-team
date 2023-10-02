@@ -1,0 +1,14 @@
+# privateinstance
+# Resources - Insights
+
+WITH temp AS (
+    SELECT partyid AS createdby,
+           REGEXP_EXTRACT(resourceid, "(.*)/(.*)", 1) AS owner,
+           REGEXP_EXTRACT(resourceid, "(.*)/(.*)", 2) AS resource_id,
+           created, resourceid AS resourcefullid
+      FROM insights
+)
+SELECT temp.createdby,
+       temp.owner, temp.resource_id AS resource,  temp.resourcefullid as resourceid, cast(temp.created as date) as created_date
+  FROM temp
+ ORDER BY created_date DESC

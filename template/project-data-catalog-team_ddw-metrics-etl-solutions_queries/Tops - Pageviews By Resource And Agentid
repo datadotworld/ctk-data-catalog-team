@@ -1,0 +1,46 @@
+# privateinstance
+# Tops - Pageviews By Resource And Agentid
+# Last updated October, 2022
+
+###############################
+### metadata resource views ###
+###############################
+WITH metadata_views AS (
+    SELECT 
+      agentid, org AS owner, resourcename AS resource, resourceid, resourcetype AS resource_type, SUM(views) AS pageviews 
+      FROM daily_catalog_resources_pages_facts
+     GROUP BY agentid, owner, resourcename, resourceid, resource_type 
+),
+################################
+### dataset or project views ###
+################################
+filtered AS (
+    SELECT agentid, urlpath AS resource, COUNT(*) AS pageviews
+      FROM pageviews
+     WHERE REGEX(urlpath, '(/[a-z0-9-]*/[a-z0-9-]*)$')
+     GROUP BY agentid, resource
+),
+dataset_or_project_views AS (
+    SELECT agentid,
+           REGEXP_EXTRACT(resource, '/(.*)/.*') AS owner,
+           REGEXP_EXTRACT(resource, '/.*/(.*)') AS resource,
+           REGEXP_EXTRACT(resource, '/(.*)') AS resourceid,
+           'dataset_or_project' AS resource_type,
+           pageviews
+      FROM filtered
+    WHERE resource NOT LIKE CONCAT(REGEXP_EXTRACT(resource, '(.*)/.*'), '/', 'catalog')
+      AND agentid IS NOT NULL
+),
+#############################################
+### metadata and dataset-or-project views ###
+#############################################
+unioned AS (
+    SELECT * 
+      FROM metadata_views
+        UNION 
+    SELECT * 
+      FROM dataset_or_project_views
+)
+SELECT *
+  FROM unioned 
+ ORDER BY pageviews DESC

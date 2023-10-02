@@ -1,0 +1,24 @@
+# privateinstance
+# Events - Catalog Resources Pending Suggestions - By Day
+# Last updated September, 2022
+
+ WITH suggestions AS (
+    SELECT *
+      FROM daily_catalog_resources_pages_facts
+     WHERE suggestions_submitted > 0
+),
+approvals_denials AS (
+    SELECT *
+      FROM daily_catalog_resources_pages_facts
+     WHERE suggestions_approved > 0 OR suggestions_denied > 0
+)
+SELECT s.date, s.org AS owner, s.agentid, s.resourcename, s.resourceid AS resource, s.resourcetype
+  FROM suggestions s
+    MINUS
+SELECT s.date, s.org AS owner, s.agentid, s.resourcename, s.resourceid AS resource, s.resourcetype
+  FROM suggestions s
+       JOIN approvals_denials ad
+       ON s.agentid = ad.requester
+            AND s.resourceid = ad.resourceid
+            AND s.date <= ad.date
+ ORDER BY date DESC

@@ -1,0 +1,19 @@
+# privateinstance
+# Visits - Return Visitors - All Time List
+# Last updated September, 2022
+
+WITH return_users AS (
+    SELECT agentid
+      FROM daily_agent_facts
+     WHERE type != 'new'
+),
+temp AS (
+    SELECT DISTINCT ru.agentid, ar.email, ar.displayname, COUNT(*) AS return_days
+      FROM return_users ru
+           LEFT JOIN agents_retention ar
+           USING (agentid)
+     GROUP BY ru.agentid, ar.email, ar.displayname
+)
+SELECT agentid, email, displayname, return_days
+  FROM temp
+ ORDER BY return_days DESC

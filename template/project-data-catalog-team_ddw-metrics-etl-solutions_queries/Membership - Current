@@ -1,0 +1,29 @@
+# privateinstance
+# Membership - Current
+# Last updated September, 2022
+
+WITH org_people AS (
+    SELECT
+           displayname,
+           agentid,
+           email,
+           created::DATE AS onboarddate
+      FROM agents
+     WHERE orgmode IS NULL OR orgmode = FALSE
+),
+lastly AS (
+    SELECT DISTINCT op.displayname, op.agentid, op.email, MIN(daf.date) AS startdate,
+           MAX(daf.date) AS lastseen, op.onboarddate AS onboard_date,
+           SUM(daf.api_events) AS api_events, SUM(daf.ui_events) AS ui_events,
+           SUM(daf.pageviews) AS pageviews, SUM(daf.queries_created) AS queries_created,
+           SUM(daf.datasets_created) AS datasets_created, SUM(daf.projects_created) AS projects_created,
+           SUM(daf.downloads) AS downloads
+      FROM org_people op
+           LEFT JOIN daily_agent_facts daf
+           USING (agentid)
+     GROUP BY displayname, agentid, email, onboarddate
+)
+SELECT *
+  FROM lastly
+ ORDER BY lastseen DESC
+

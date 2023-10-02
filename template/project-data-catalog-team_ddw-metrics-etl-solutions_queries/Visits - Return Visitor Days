@@ -1,0 +1,10 @@
+# privateinstance
+# Visits - Return Visitor Days
+# Last updated September, 2022
+
+SELECT DISTINCT daf.date, daf.agentid, ar.email, ar.displayname
+  FROM daily_agent_facts daf
+       JOIN agents_retention ar
+       USING (agentid)
+ WHERE daf.type != 'new'
+ ORDER BY daf.date DESC

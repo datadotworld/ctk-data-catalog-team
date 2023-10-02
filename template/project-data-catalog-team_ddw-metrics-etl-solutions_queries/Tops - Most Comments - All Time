@@ -1,0 +1,27 @@
+# privateinstance
+# Tops - Most Comments - All Time
+
+WITH results AS (
+    SELECT resourcetype,
+           CASE resourcetype
+             WHEN = "datasetInsight" THEN REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)/(.*)", 2)
+             ELSE REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)", 2)
+           END AS resource_agentid,
+           CASE resourcetype
+             WHEN = "datasetInsight" THEN REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)/(.*)", 3)
+             ELSE REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)", 3)
+           END AS resourceid,
+           CASE resourcetype
+             WHEN = "datasetInsight" THEN REGEXP_EXTRACT(resource, "(.*):(.*)/(.*)/(.*)", 4)
+             ELSE NULL
+           END AS subresourceid,
+           topicid, commentid, resourceversion, created, createdby, updated, updatedby, resource
+      FROM comments
+)
+
+SELECT resourcetype, resource_agentid as owner, resourceid as resource, 
+       concat(resource_agentid, '/', resourceid) as resourceid,
+       COUNT(*) AS comments
+  FROM results
+ GROUP BY resourcetype, resource_agentid, resourceid
+ ORDER BY comments DESC

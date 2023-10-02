@@ -1,0 +1,7 @@
+# privateinstance
+# Events - Catalog Resources Approved Or Denied Suggestions - By Day
+
+SELECT date, org AS owner, agentid as responder, requester, resourcename, resourceid as resource, resourcetype, suggestions_approved, suggestions_denied 
+  FROM daily_catalog_resources_pages_facts dcpf
+ WHERE suggestions_approved > 0 OR suggestions_denied > 0 
+ ORDER BY date DESC

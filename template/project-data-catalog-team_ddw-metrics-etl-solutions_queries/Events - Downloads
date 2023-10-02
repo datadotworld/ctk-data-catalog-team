@@ -1,0 +1,10 @@
+# privateinstance
+# Events - Downloads
+# Last updated September, 2022
+
+ WITH parsed AS (SELECT date, agentid, type, owner, resourceid AS resource, CONCAT(owner, '/', resourceid) AS resourceid_tmp,filename, filelabels  FROM downloads)
+  SELECT p.date, p.agentid, p.type, p.owner, p.resource, p.resourceid_tmp AS resourceid, p.filename, p.filelabels, email, displayname
+       FROM parsed p
+ JOIN agents_retention
+   USING (agentid)
+ ORDER BY date DESC

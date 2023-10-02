@@ -1,0 +1,11 @@
+# privateinstance
+# Events - Pageviews - Last 90 Days
+# Last updated September, 2022
+
+SELECT p.date, p.ts, p.agentid, a.email, "pageview" AS action, p.urlpath, p.raw:context.page.referrer::STRING as referrer
+  FROM pageviews p
+    JOIN agents_retention a
+      USING (agentid)
+ WHERE p.agentid IS NOT NULL
+       AND DATE_DIFF(p.date, CAST(NOW() AS DATE), "day") <= 90
+ ORDER BY p.ts DESC

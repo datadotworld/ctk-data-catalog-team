@@ -1,0 +1,14 @@
+# privateinstance
+# Resources - Dataset Owner Report
+
+SELECT ownerid as owner, datasetid as resource, concat(ownerid, '/', datasetid) as resourceid,
+       sum(queries_run) as queries_run,
+       sum(queries_saved) as queries_saved,
+       sum(downloads) as downloads,
+       sum(pageviews) as pageviews,
+       sum(bookmarks) as bookmarks,
+       sum(auth_requests) as auth_requests
+FROM daily_dataset_facts
+WHERE ownerid IS NOT NULL 
+  AND datasetid IS NOT NULL
+group by ownerid, datasetid

@@ -1,0 +1,12 @@
+# privateinstance
+# Visits - Return Visitors - Weekly
+# Last updated September, 2022
+
+SELECT DATE_TRUNC(daf.date, 'week') AS week, COUNT(DISTINCT daf.agentid) AS return_visitors
+  FROM daily_agent_facts daf
+       JOIN agents_retention ar
+       USING (agentid)
+ WHERE type != 'new'
+       AND ar.email NOT LIKE '%@data.world'
+ GROUP BY week
+ ORDER BY week DESC

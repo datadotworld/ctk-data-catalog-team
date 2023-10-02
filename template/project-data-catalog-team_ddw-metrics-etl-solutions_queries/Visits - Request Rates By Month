@@ -1,0 +1,43 @@
+# privateinstance
+# Visits - Request Rates By Month
+# Last updated September, 2022
+
+WITH temp AS (
+    SELECT daf.date, daf.agentid
+      FROM daily_agent_facts daf
+           JOIN agents_retention ar
+           USING (agentid)
+     WHERE daf.agentid IS NOT NULL
+           AND ar.email NOT LIKE '%@data.world'
+),
+aggregated AS (
+    SELECT DATE_TRUNC(date, 'month') AS month, COUNT(DISTINCT agentid) AS unique_visitors
+      FROM temp
+     GROUP BY month
+     ORDER BY month DESC
+),
+requests_temp AS (
+    SELECT DISTINCT CAST(created AS DATE) AS date, REGEXP_EXTRACT(requesterparty, 'agent:(.*)') AS agentid
+      FROM authorizationrequests_retention
+),
+requests_aggregated AS (
+    SELECT DATE_TRUNC(date, 'month') AS month, COUNT(DISTINCT agentid) AS requests
+      FROM requests_temp
+     GROUP BY month
+),
+lastly AS (
+    SELECT month, unique_visitors, requests,
+           requests / unique_visitors * 100 AS pct_made_request
+      FROM aggregated
+           LEFT JOIN requests_aggregated
+           USING (month)
+)
+SELECT month, unique_visitors,
+       IF(requests IS NULL, 0, requests) AS unique_requesters,
+       IF(pct_made_request IS NULL, 0, pct_made_request) AS pct_made_request
+  FROM lastly
+ ORDER BY month DESC
+
+
+
+

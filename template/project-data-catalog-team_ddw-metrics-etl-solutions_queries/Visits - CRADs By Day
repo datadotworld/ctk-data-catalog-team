@@ -1,0 +1,18 @@
+# privateinstance
+# Visits - CRADs By Day
+# Last updated September, 2022
+
+WITH temp AS (
+    SELECT DISTINCT daf.date, daf.agentid
+      FROM daily_agent_facts daf
+           JOIN agents_retention ar
+           USING (agentid)
+     WHERE daf.api_events + daf.ui_events > 10
+           AND daf.type != 'new'
+           AND ar.email NOT LIKE '%@data.world'
+)
+
+SELECT date, COUNT(*) AS rads
+  FROM temp
+ GROUP BY date
+ ORDER BY date DESC

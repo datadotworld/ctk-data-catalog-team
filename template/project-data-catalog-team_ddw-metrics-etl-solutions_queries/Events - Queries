@@ -1,0 +1,5 @@
+# privateinstance
+# Events - Queries
+
+SELECT *
+  FROM query_audit WHERE ts::DATE >= DATE_ADD(NOW()::DATE, -90, 'day')

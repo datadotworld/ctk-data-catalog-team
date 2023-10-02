@@ -1,0 +1,18 @@
+# privateinstance
+# Resources - Database Connections
+# Last updated September, 2022
+
+SELECT DISTINCT
+       databasesources.label AS database_connection_label,
+       databasesources.type AS database_connection_type,
+       databasesources.agentid AS connection_agentid,
+       ar.displayname AS connection_agent_displayname,
+       ar.email AS connection_agent_email,
+       CAST(databasesources.created AS DATE) AS connection_created,
+       databasesources.createdby AS connection_createdby,
+       CAST(databasesources.updated AS DATE) AS connection_updated,
+       databasesources.updatedby AS connection_updatedby
+  FROM databasesources
+       LEFT JOIN agents ar
+       USING (agentid)
+ ORDER BY databasesources.created DESC

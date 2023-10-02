@@ -1,0 +1,16 @@
+# privateinstance
+# Resources - Queries
+
+WITH temp AS (
+    SELECT partyid AS createdby, resourcetype, type AS querytype, name AS query_name,
+           REGEXP_EXTRACT(resourceid, "(.*)/(.*)", 1) AS owner,
+           REGEXP_EXTRACT(resourceid, "(.*)/(.*)", 2) AS resource_id,
+           created
+      FROM queries
+)
+SELECT temp.query_name, temp.querytype, temp.createdby,
+       temp.resourcetype, temp.owner, temp.resource_id AS resource,
+       concat (temp.owner, '/', temp.resource_id) as resourceid, 
+       cast(temp.created as date) as created_date
+  FROM temp
+ ORDER BY created_date DESC

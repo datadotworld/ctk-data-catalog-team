@@ -1,0 +1,18 @@
+# privateinstance
+# Visits - New Users By Month
+# Last updated September, 2022
+
+WITH temp AS (
+    SELECT created::DATE AS date_temp
+      FROM agents_retention
+     WHERE email NOT LIKE '%@data.world'
+           AND (orgmode IS NULL OR orgmode = FALSE)
+),
+temp2 AS (
+    SELECT DATE_TRUNC(date_temp, 'month') AS month, COUNT(*) AS new_users
+      FROM temp
+     GROUP BY month
+     ORDER BY month DESC
+)
+SELECT *
+  FROM temp2

@@ -1,0 +1,19 @@
+# privateinstance
+# Visits - Avg Visits Weekly
+# Last updated September, 2022
+
+WITH weekly_active_days_by_user AS (
+    SELECT DISTINCT DATE_TRUNC(daf.date, 'week') AS week, daf.agentid, COUNT(*) AS weekly_active_days, 1 AS n_weeks
+      FROM daily_agent_facts daf
+           JOIN agents_retention ar
+           USING (agentid)
+     WHERE ar.email NOT LIKE '%@data.world'
+     GROUP BY week, daf.agentid
+)
+SELECT week,
+       SUM(weekly_active_days) weekly_user_days,
+       COUNT(DISTINCT agentid) unique_visitors,
+       ROUND(SUM(weekly_active_days) / SUM(n_weeks), 1) AS avg_visits_per_week
+  FROM weekly_active_days_by_user
+ GROUP BY week
+ ORDER BY week DESC

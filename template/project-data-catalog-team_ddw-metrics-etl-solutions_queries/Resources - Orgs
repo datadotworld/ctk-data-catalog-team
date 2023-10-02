@@ -1,0 +1,7 @@
+# privateinstance
+# Resources - Orgs
+
+SELECT agentid as orgname, displayname, cast(created as date) as created, createdby, cast(updated as date) as updated,
+       updatedby, website, bio, allowedroles
+       FROM agents
+where orgmode=True

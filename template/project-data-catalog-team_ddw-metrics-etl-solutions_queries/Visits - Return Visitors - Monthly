@@ -1,0 +1,12 @@
+# privateinstance
+# Visits - Return Visitors - Monthly
+# Last updated September, 2022
+
+SELECT DATE_TRUNC(daf.date, 'month') AS month, COUNT(DISTINCT daf.agentid) AS return_visitors
+  FROM daily_agent_facts daf
+       JOIN agents_retention ar
+       USING (agentid)
+ WHERE daf.type != 'new'
+       AND ar.email NOT LIKE '%@data.world'
+ GROUP BY month
+ ORDER BY month DESC

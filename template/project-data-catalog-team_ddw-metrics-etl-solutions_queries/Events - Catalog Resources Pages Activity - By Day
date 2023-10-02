@@ -1,0 +1,6 @@
+# privateinstance
+# Events - Catalog Resources Pages Activity - By Day
+
+SELECT date, org AS owner, agentid, resourcename, resourceid as resource, resourcetype, views, edits, creates, suggestions_submitted, deletes 
+  FROM daily_catalog_resources_pages_facts dcpf
+ ORDER BY date DESC

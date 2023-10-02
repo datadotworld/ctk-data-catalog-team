@@ -1,0 +1,24 @@
+# privateinstance
+# Visits - Snapshot Repeat Visitors
+# Last updated September, 2022
+
+WITH temp AS (
+    SELECT daf.date, daf.agentid, daf.type
+      FROM daily_agent_facts daf
+           JOIN agents_retention ar
+           USING (agentid)
+     WHERE ar.email NOT LIKE '%@data.world'
+),
+allvisitors AS (
+    SELECT COUNT(DISTINCT agentid) AS all_visitors, "temp" AS temp
+      FROM temp
+),
+returnvisitors AS (
+    SELECT COUNT(DISTINCT agentid) AS return_visitors, "temp" AS temp
+      FROM temp
+     WHERE type != 'new'
+)
+SELECT all_visitors, return_visitors, ROUND(return_visitors / all_visitors * 100, 1) AS pct_returned
+  FROM allvisitors
+       JOIN returnvisitors
+       USING (temp)

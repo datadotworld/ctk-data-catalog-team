@@ -1,0 +1,10 @@
+# privateinstance
+# Resources - Followers 
+# Last updated September, 2022
+
+SELECT f.following, f.agentid, cast(f.created as date) as created,
+       a.displayname, a.email, a.company, a.bio
+  FROM follows f
+       JOIN agents a
+       USING (agentid)
+ ORDER BY created DESC

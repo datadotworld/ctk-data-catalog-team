@@ -1,0 +1,19 @@
+# privateinstance
+# Resources - Datasets 
+# Last updated September, 2022
+
+SELECT DISTINCT d.agentid AS owner, d.datasetid AS resource,
+       CONCAT(d.agentid, '/', d.datasetid) AS resourceid,
+       d.headline AS description, d.abstract AS summary,
+       REGEXP_EXTRACT(d.createdby, "(.*):(.*)", 2) AS createdby_agentid,
+       a.displayname AS createdby_displayname,
+       a.email AS createdby_email,
+       REGEXP_EXTRACT(d.createdby, "(.*):(.*)", 1) AS createdby_client,
+       CAST(d.created AS DATE) AS created, CAST(d.updated AS DATE) AS updated,
+       d.visibility, d.tags, d.notificationsEmail
+  FROM datasets d
+       LEFT JOIN agents a
+       ON REGEXP_EXTRACT(d.createdby, "(.*):(.*)", 2) = a.agentid
+ WHERE (d.project IS NULL OR d.project = FALSE)
+    
+

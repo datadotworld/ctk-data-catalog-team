@@ -1,0 +1,24 @@
+# privateinstance
+# Events - Create Dataset Project Events
+# Last updated September, 2022
+
+ WITH parsed AS (SELECT CAST(d.created AS DATE) AS date,
+       d.agentid AS owner,
+       d.datasetid AS resource,
+       CONCAT(d.agentid, '/', datasetid) AS resourceid,
+       REGEXP_EXTRACT(d.createdby, '.*:(.*)') AS createdby_agent,
+     d.visibility,
+       IF(project = TRUE, 'PROJECT', 'DATASET') AS type
+  FROM datasets d)
+   SELECT p.date,
+        p.owner,
+      p.resource,
+   p.resourceid,
+         p.createdby_agent AS createdby,
+       p.visibility,
+         p.type,
+       ah.email
+       FROM parsed p
+     JOIN agents_retention ah
+  ON p.createdby_agent = ah.agentid
+ ORDER BY date DESC

@@ -1,0 +1,17 @@
+# privateinstance
+# Resources - Dataset Files
+
+SELECT f.agentid AS owner,
+       datasetid AS resource,
+       CONCAT(f.agentid, '/', datasetid) AS resourceid,
+       dataset_name,
+       file_name,
+       file_created_time,
+       file_created_time::DATE AS file_created_date,
+       REGEXP_EXTRACT(file_createdby, '(.*):.*') AS file_createdby_client,
+       REGEXP_EXTRACT(file_createdby, '.*:(.*)') AS file_createdby_agentid,
+       file_materialized_or_virtualized,
+       is_file_discoverable,
+       file_size_in_bytes
+  FROM files_from_latest_dataset_dim f
+ ORDER BY file_created_time DESC

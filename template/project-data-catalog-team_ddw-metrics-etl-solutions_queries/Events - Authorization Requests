@@ -1,0 +1,19 @@
+# privateinstance 
+# Events - Authorization Requests
+# Last updated September, 2022
+
+SELECT a.created::DATE AS date,
+       REGEXP_EXTRACT(a.requesterparty, '.*:(.*)') AS requester,
+       agents.email AS requester_email,
+       agents.displayname AS requester_displayname,
+       REGEXP_EXTRACT(a.approverparty, '.*:(.*)') AS approver,
+       REGEXP_EXTRACT(a.resourceid, '(.*)/.*') AS owner,
+       REGEXP_EXTRACT(a.resourceid, '.*/(.*)') AS resource,
+       a.resourceid,
+       a.resourcetype,
+       a.visibility,
+       a.level
+  FROM authorizationrequests_retention a
+       JOIN agents
+       ON REGEXP_EXTRACT(requesterparty, '.*:(.*)') = agents.agentid
+ ORDER BY date DESC

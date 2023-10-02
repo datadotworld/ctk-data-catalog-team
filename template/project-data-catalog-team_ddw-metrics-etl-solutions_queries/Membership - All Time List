@@ -1,0 +1,23 @@
+# privateinstance
+# Membership - All Time List
+# Last updated September, 2022
+
+WITH temp AS (
+    SELECT DISTINCT ar.agentid,
+             ar.email, 
+            ar.displayname,
+           CASE
+             WHEN ar.agentid in (select agentid from agents)
+             THEN TRUE
+             ELSE FALSE
+           END AS current_member,
+           MAX(daf.date) AS last_date_seen
+      FROM agents_retention ar
+           LEFT JOIN daily_agent_facts daf
+           USING (agentid)
+     WHERE orgmode = FALSE OR orgmode IS NULL
+     GROUP BY ar.agentid, ar.email, ar.displayname
+)
+SELECT *
+  FROM temp
+ ORDER BY last_date_seen DESC

@@ -1,0 +1,14 @@
+# privateinstance
+# Resources - Synced Datasets
+
+SELECT d.agentid AS owner, d.datasetid AS resource, 
+       concat(d.agentid, '/', d.datasetid) as resourceid,
+       datasetsources.agentid AS connection_agentid,
+       cast(datasetsources.created as date) AS connection_created,
+       cast(datasetsources.updated as date) AS connection_updated,
+       datasetsources.syncstatus, datasetsources.lastsyncstart, datasetsources.lastsyncfinish,
+       datasetsources.nextscheduledsync, datasetsources.nextscheduledsynctype
+  FROM datasets d
+       JOIN datasetsources
+       USING (datasetid, agentid)
+ ORDER BY lastsyncfinish DESC

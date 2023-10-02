@@ -1,0 +1,20 @@
+# privateinstance
+# Resources - Authorizations
+
+WITH parsed AS (
+    SELECT created::date as date,
+    party,
+    partyid,
+    partytype,
+    level,
+    resource,
+    resourceid,
+    resourcetype,
+    REGEXP_EXTRACT(resourceid, '(.*)/(.*)', 1) AS owner,
+    visibility,
+    requesterparty,
+    approverparty
+    FROM authorizations)
+SELECT *
+FROM parsed
+ORDER BY date desc, owner
