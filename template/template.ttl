@@ -10,19 +10,19 @@
 :query-ba411667-32d2-478f-b152-e52ca0cf309a
         a            dwt:SqlQuery ;
         dct:title    "Visits - Return Visitor Days" ;
-        dwt:content  "# privateinstance\n# Visits - Return Visitor Days\n# Last updated September, 2022\n\nSELECT DISTINCT daf.date, daf.agentid, ar.email, ar.displayname\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE daf.type != 'new'\n ORDER BY daf.date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-a6d388b7-9228-446d-bcb6-49c03ee79c0e
         a            dwt:SqlQuery ;
         dct:title    "Resources - Comments" ;
-        dwt:content  "# privateinstance\n# Resources - Comments\n\nWITH results AS (\n    SELECT resourcetype,\n           CASE resourcetype\n             WHEN = \"datasetInsight\" THEN REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)/(.*)\", 2)\n             ELSE REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)\", 2)\n           END AS owner,\n           CASE resourcetype\n             WHEN = \"datasetInsight\" THEN REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)/(.*)\", 3)\n             ELSE REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)\", 3)\n           END AS resourceid,\n           created, REGEXP_EXTRACT(createdby, \"(.*):(.*)\", 2) AS commenter\n      FROM comments\n)\nSELECT  results.commenter as agentid, results.owner, results.resourceid as resource,\n      concat(owner, '/', resourceid) as resourceid, results.resourcetype,\n        cast(results.created as date) as created_date\n  FROM results\n    order by created_date desc" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-2b411295-5922-4368-af7d-88f0d4d23798
         a            dwt:SqlQuery ;
         dct:title    "Resources - Synced Datasets" ;
-        dwt:content  "# privateinstance\n# Resources - Synced Datasets\n\nSELECT d.agentid AS owner, d.datasetid AS resource, \n       concat(d.agentid, '/', d.datasetid) as resourceid,\n       datasetsources.agentid AS connection_agentid,\n       cast(datasetsources.created as date) AS connection_created,\n       cast(datasetsources.updated as date) AS connection_updated,\n       datasetsources.syncstatus, datasetsources.lastsyncstart, datasetsources.lastsyncfinish,\n       datasetsources.nextscheduledsync, datasetsources.nextscheduledsynctype\n  FROM datasets d\n       JOIN datasetsources\n       USING (datasetid, agentid)\n ORDER BY lastsyncfinish DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-6c6286ff-6bb0-4f44-bfd5-4aeee0749f8c
@@ -33,7 +33,7 @@
 :query-45aa77ac-647d-42a2-b2a4-4c72b4eb9103
         a            dwt:SqlQuery ;
         dct:title    "Visits - Unique Visitors - Weekly" ;
-        dwt:content  "# privateinstance\n# Visits - Unique Visitors - Weekly\n# Last updated September, 2022\n\nSELECT DATE_TRUNC(daf.date, 'week') AS week, COUNT(DISTINCT daf.agentid) AS unique_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE ar.email NOT LIKE '%@data.world'\n GROUP BY week\n ORDER BY week DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-a8c32796-b658-4e1d-867e-48762abf7f83
@@ -64,13 +64,13 @@
 :query-36348c93-5429-4ca1-97e9-a6ae7c0782fb
         a            dwt:SqlQuery ;
         dct:title    "Events - Create Dataset Project Events" ;
-        dwt:content  "# privateinstance\n# Events - Create Dataset Project Events\n# Last updated September, 2022\n\n WITH parsed AS (SELECT CAST(d.created AS DATE) AS date,\n       d.agentid AS owner,\n       d.datasetid AS resource,\n       CONCAT(d.agentid, '/', datasetid) AS resourceid,\n       REGEXP_EXTRACT(d.createdby, '.*:(.*)') AS createdby_agent,\n     d.visibility,\n       IF(project = TRUE, 'PROJECT', 'DATASET') AS type\n  FROM datasets d)\n   SELECT p.date,\n        p.owner,\n      p.resource,\n   p.resourceid,\n         p.createdby_agent AS createdby,\n       p.visibility,\n         p.type,\n       ah.email\n       FROM parsed p\n     JOIN agents_retention ah\n  ON p.createdby_agent = ah.agentid\n ORDER BY date DESC\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-2d5df84d-5b76-4332-9b5f-bd4723e0b271
         a            dwt:SqlQuery ;
         dct:title    "Visits - Unique Visitors - Monthly" ;
-        dwt:content  "# privateinstance\n# Visits - Unique Visitors - Monthly\n# Last updated September, 2022\n\n    SELECT DISTINCT DATE_TRUNC(daf.date, 'month') AS month, COUNT(DISTINCT daf.agentid) AS unique_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE ar.email NOT LIKE '%@data.world'\n GROUP BY month\n ORDER BY month DESC\n" ;
+	dwt:content  "# privateinstance\n# Visits - Unique Visitors - Monthly\n# Last updated September, 2022\n\n    SELECT DISTINCT DATE_TRUNC(daf.date, 'month') AS month, COUNT(DISTINCT daf.agentid) AS unique_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE ar.email NOT LIKE '%@data.world'\n GROUP BY month\n ORDER BY month DESC\n" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-1c3e81ef-7f3f-49de-8ea4-cd79264dee09
@@ -86,31 +86,31 @@
 :query-d9f64c21-b53e-4b63-aa18-6e4c501fa0a2
         a            dwt:SqlQuery ;
         dct:title    "Membership - All Time List" ;
-        dwt:content  "# privateinstance\n# Membership - All Time List\n# Last updated September, 2022\n\nWITH temp AS (\n    SELECT DISTINCT ar.agentid,\n             ar.email, \n            ar.displayname,\n           CASE\n             WHEN ar.agentid in (select agentid from agents)\n             THEN TRUE\n             ELSE FALSE\n           END AS current_member,\n           MAX(daf.date) AS last_date_seen\n      FROM agents_retention ar\n           LEFT JOIN daily_agent_facts daf\n           USING (agentid)\n     WHERE orgmode = FALSE OR orgmode IS NULL\n     GROUP BY ar.agentid, ar.email, ar.displayname\n)\nSELECT *\n  FROM temp\n ORDER BY last_date_seen DESC\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-af906ea4-7b37-45c6-8bcc-575f50f45f92
         a            dwt:SqlQuery ;
         dct:title    "Resources - Authorizations" ;
-        dwt:content  "# privateinstance\n# Resources - Authorizations\n\nWITH parsed AS (\n    SELECT created::date as date,\n    party,\n    partyid,\n    partytype,\n    level,\n    resource,\n    resourceid,\n    resourcetype,\n    REGEXP_EXTRACT(resourceid, '(.*)/(.*)', 1) AS owner,\n    visibility,\n    requesterparty,\n    approverparty\n    FROM authorizations)\nSELECT *\nFROM parsed\nORDER BY date desc, owner\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-c9329560-0f2d-4607-bee0-283be912c7ae
         a            dwt:SqlQuery ;
         dct:title    "Events - Authorization Requests" ;
-        dwt:content  "# privateinstance \n# Events - Authorization Requests\n# Last updated September, 2022\n\nSELECT a.created::DATE AS date,\n       REGEXP_EXTRACT(a.requesterparty, '.*:(.*)') AS requester,\n       agents.email AS requester_email,\n       agents.displayname AS requester_displayname,\n       REGEXP_EXTRACT(a.approverparty, '.*:(.*)') AS approver,\n       REGEXP_EXTRACT(a.resourceid, '(.*)/.*') AS owner,\n       REGEXP_EXTRACT(a.resourceid, '.*/(.*)') AS resource,\n       a.resourceid,\n       a.resourcetype,\n       a.visibility,\n       a.level\n  FROM authorizationrequests_retention a\n       JOIN agents\n       ON REGEXP_EXTRACT(requesterparty, '.*:(.*)') = agents.agentid\n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-bd62a007-ed10-470c-a4af-44444f0e7146
         a            dwt:SqlQuery ;
         dct:title    "Tops - Engagement" ;
-        dwt:content  "# privateinstance\n# Tops - Engagement\n# Last updated September, 2022\n\nWITH rads_days AS (\n    SELECT DISTINCT date, agentid\n      FROM daily_agent_facts\n     WHERE api_events + ui_events > 10\n           AND type != 'new'\n),\nrads AS (\n    SELECT agentid, COUNT(*) AS rads\n      FROM rads_days\n     GROUP BY agentid\n),\nui_events AS (\n    SELECT DISTINCT daf.agentid, r.rads, SUM(daf.ui_events) AS ui_events, SUM(daf.api_events) AS api_events, MIN(daf.date) AS first_seen, MAX(daf.date) AS last_seen\n      FROM daily_agent_facts daf\n           JOIN rads r\n           USING (agentid)\n     GROUP BY daf.agentid, r.rads\n)\nSELECT ui.agentid, a.email, a.displayname, a.created::DATE AS onboard_date, ui.rads, ui.ui_events, ui.api_events, ui.first_seen, ui.last_seen\n  FROM ui_events ui\n       JOIN agents_retention a\n       USING (agentid)\n WHERE a.orgmode IS NULL OR a.orgmode = FALSE\n ORDER BY ui.rads DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-ba170bc5-1fcf-4072-854e-33b418e2b16a
         a            dwt:SqlQuery ;
         dct:title    "Membership - Current By Org" ;
-        dwt:content  "# privateinstance\n# Membership - Current By Org\n# Last updated September, 2022\n\nWITH dates AS (\n    SELECT daf.agentid, a.email, a.displayname, MIN(daf.date) AS startdate, MAX(daf.date) AS lastseen\n      FROM daily_agent_facts  daf\n      left join agents a USING (agentid)\n     GROUP BY daf.agentid, a.email, a.displayname\n),\nauths AS (\n    SELECT partyid as agentid, REGEXP_EXTRACT(resourceid, '(.*)/(.*)', 1) as org, level AS auth_level, visibility, updated::DATE AS date_auth_updated\n    from authorizations \n      where resourcetype = 'group'\n)\nSELECT auths.agentid, d.displayname, d.email, auths.org, auths.auth_level, auths.visibility, auths.date_auth_updated, d.startdate, d.lastseen\n  FROM auths \n  left join dates d using(agentid)\n ORDER BY agentid, org" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-695a31aa-737c-45dd-b492-f36ac9b720ad
@@ -121,7 +121,7 @@
 :query-d1c9d58c-132a-4a74-a56d-544eb95de3b0
         a            dwt:SqlQuery ;
         dct:title    "Resources - Insights" ;
-        dwt:content  "# privateinstance\n# Resources - Insights\n\nWITH temp AS (\n    SELECT partyid AS createdby,\n           REGEXP_EXTRACT(resourceid, \"(.*)/(.*)\", 1) AS owner,\n           REGEXP_EXTRACT(resourceid, \"(.*)/(.*)\", 2) AS resource_id,\n           created, resourceid AS resourcefullid\n      FROM insights\n)\nSELECT temp.createdby,\n       temp.owner, temp.resource_id AS resource,  temp.resourcefullid as resourceid, cast(temp.created as date) as created_date\n  FROM temp\n ORDER BY created_date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-d0f7432c-e991-478d-8b7a-2d126ebc0961
@@ -132,19 +132,19 @@
 :query-b9278b3f-ed1a-43e4-8b6a-d25667fb5c75
         a            dwt:SqlQuery ;
         dct:title    "Resources - Dataset Owner Report" ;
-        dwt:content  "# privateinstance\n# Resources - Dataset Owner Report\n\nSELECT ownerid as owner, datasetid as resource, concat(ownerid, '/', datasetid) as resourceid,\n       sum(queries_run) as queries_run,\n       sum(queries_saved) as queries_saved,\n       sum(downloads) as downloads,\n       sum(pageviews) as pageviews,\n       sum(bookmarks) as bookmarks,\n       sum(auth_requests) as auth_requests\nFROM daily_dataset_facts\nWHERE ownerid IS NOT NULL \n  AND datasetid IS NOT NULL\ngroup by ownerid, datasetid" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-f76d15cd-0695-420a-8108-33bc8777f0c1
         a            dwt:SqlQuery ;
         dct:title    "Visits - Return Visitors - All Time List" ;
-        dwt:content  "# privateinstance\n# Visits - Return Visitors - All Time List\n# Last updated September, 2022\n\nWITH return_users AS (\n    SELECT agentid\n      FROM daily_agent_facts\n     WHERE type != 'new'\n),\ntemp AS (\n    SELECT DISTINCT ru.agentid, ar.email, ar.displayname, COUNT(*) AS return_days\n      FROM return_users ru\n           LEFT JOIN agents_retention ar\n           USING (agentid)\n     GROUP BY ru.agentid, ar.email, ar.displayname\n)\nSELECT agentid, email, displayname, return_days\n  FROM temp\n ORDER BY return_days DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-33b9fc80-e7be-48ad-a132-7bb12d3ff33c
         a            dwt:SqlQuery ;
         dct:title    "Events - Searches - Last 90 Days" ;
-        dwt:content  "# privateinstance\n# Events - Searches\n# Last updated September, 2022\n\nSELECT searches.date,\n       searches.timestamp_utc AS ts,\n       searches.agentid,\n       a.email,\n       a.displayname,\n       searches.action,\n       searches.search_value,\n       searches.num_results,\n       searches.selected_facets\n  FROM searches\n       LEFT JOIN agents_retention a\n       ON searches.agentid = a.agentid\n ORDER BY ts DESC, agentid\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-583c9b10-8d84-4836-9e05-46062d732c34
@@ -155,19 +155,19 @@
 :query-bcdcbdf6-bc1b-467a-a375-a47fa1e6c586
         a            dwt:SqlQuery ;
         dct:title    "Visits - Unique Visitors - To Date" ;
-        dwt:content  "# privateinstance\n# Visits - Unique Visitors - To Date\n# Last updated September, 2022\n\nSELECT COUNT(DISTINCT daf.agentid)\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE ar.email NOT LIKE '%@data.world'\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-40f776b2-7e45-42ab-8676-c670cc33b1d1
         a            dwt:SqlQuery ;
         dct:title    "Visits - Return Visitors - To Date" ;
-        dwt:content  "# privateinstance\n# Visits - Return Visitors - To Date\n# Last updated September, 2022\n\nSELECT COUNT(DISTINCT daf.agentid)\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE daf.type != 'new'\n       AND ar.email NOT LIKE '%@data.world'" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-d6fe1044-f109-41bd-ac01-ddc654b2f56b
         a            dwt:SqlQuery ;
         dct:title    "Events - Catalog Resources Pending Suggestions - By Day" ;
-        dwt:content  "# privateinstance\n# Events - Catalog Resources Pending Suggestions - By Day\n# Last updated September, 2022\n\n WITH suggestions AS (\n    SELECT *\n      FROM daily_catalog_resources_pages_facts\n     WHERE suggestions_submitted > 0\n),\napprovals_denials AS (\n    SELECT *\n      FROM daily_catalog_resources_pages_facts\n     WHERE suggestions_approved > 0 OR suggestions_denied > 0\n)\nSELECT s.date, s.org AS owner, s.agentid, s.resourcename, s.resourceid AS resource, s.resourcetype\n  FROM suggestions s\n    MINUS\nSELECT s.date, s.org AS owner, s.agentid, s.resourcename, s.resourceid AS resource, s.resourcetype\n  FROM suggestions s\n       JOIN approvals_denials ad\n       ON s.agentid = ad.requester\n            AND s.resourceid = ad.resourceid\n            AND s.date <= ad.date\n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-a36d3bda-e278-4ac8-8cc0-5a2365743411
@@ -183,7 +183,7 @@
 :query-e54e98dc-abd6-4603-88f3-bf81be41db4f
         a            dwt:SqlQuery ;
         dct:title    "Tops - Most Bookmarked Resources" ;
-        dwt:content  "# privateinstance\n# Tops - Most Bookmarked Resources\n\nSELECT regexp_extract(resourceid, '(.*)/.*') as owner, \n       regexp_extract(resourceid, '.*/(.*)') as resource,\n       resourcetype, \n       count(*) as bookmarks\nFROM likes\nwhere resourceid != 'topic'\ngroup by resourceid, resourcetype \norder by bookmarks desc" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-ed01e364-66f1-4775-bd8f-a22206234db5
@@ -219,7 +219,7 @@
 :query-52147c60-901b-4be9-98b6-511837d67671
         a            dwt:SqlQuery ;
         dct:title    "Visits - Request Rates By Month" ;
-        dwt:content  "# privateinstance\n# Visits - Request Rates By Month\n# Last updated September, 2022\n\nWITH temp AS (\n    SELECT daf.date, daf.agentid\n      FROM daily_agent_facts daf\n           JOIN agents_retention ar\n           USING (agentid)\n     WHERE daf.agentid IS NOT NULL\n           AND ar.email NOT LIKE '%@data.world'\n),\naggregated AS (\n    SELECT DATE_TRUNC(date, 'month') AS month, COUNT(DISTINCT agentid) AS unique_visitors\n      FROM temp\n     GROUP BY month\n     ORDER BY month DESC\n),\nrequests_temp AS (\n    SELECT DISTINCT CAST(created AS DATE) AS date, REGEXP_EXTRACT(requesterparty, 'agent:(.*)') AS agentid\n      FROM authorizationrequests_retention\n),\nrequests_aggregated AS (\n    SELECT DATE_TRUNC(date, 'month') AS month, COUNT(DISTINCT agentid) AS requests\n      FROM requests_temp\n     GROUP BY month\n),\nlastly AS (\n    SELECT month, unique_visitors, requests,\n           requests / unique_visitors * 100 AS pct_made_request\n      FROM aggregated\n           LEFT JOIN requests_aggregated\n           USING (month)\n)\nSELECT month, unique_visitors,\n       IF(requests IS NULL, 0, requests) AS unique_requesters,\n       IF(pct_made_request IS NULL, 0, pct_made_request) AS pct_made_request\n  FROM lastly\n ORDER BY month DESC\n\n\n\n\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-4e6b083e-32f5-4877-8d71-91a532e428f9
@@ -230,25 +230,25 @@
 :query-94ff7163-7be8-4b02-99e0-b390ff815169
         a            dwt:SqlQuery ;
         dct:title    "Visits - Return Visitors - Daily" ;
-        dwt:content  "# privateinstance\n# Visits - Return Visitors - Daily\n# Last updated September, 2022\n\nSELECT daf.date, COUNT(*) AS return_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE daf.type != 'new'\n       AND ar.email NOT LIKE '%@data.world'\n GROUP BY daf.date\n ORDER BY daf.date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-36ab158c-0ff6-47a8-ad36-967683957f4a
         a            dwt:SqlQuery ;
         dct:title    "Visits - Unique Visitors - All Time List" ;
-        dwt:content  "# privateinstance\n# Visits - Unique Visitors - All Time List\n# Last updated September, 2022\n\nWITH n_days AS (\n    SELECT agentid, COUNT(*) active_days\n      FROM daily_agent_facts\n     GROUP BY agentid\n)\nSELECT n.agentid, ar.email, ar.displayname, n.active_days\n  FROM n_days n\n       JOIN agents_retention ar\n       USING (agentid)\n ORDER BY n.active_days DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-9d519973-e6f4-4da2-bbb4-c0f129a0e3ee
         a            dwt:SqlQuery ;
         dct:title    "Events - Catalog Resources Pages Activity - By Day" ;
-        dwt:content  "# privateinstance\n# Events - Catalog Resources Pages Activity - By Day\n\nSELECT date, org AS owner, agentid, resourcename, resourceid as resource, resourcetype, views, edits, creates, suggestions_submitted, deletes \n  FROM daily_catalog_resources_pages_facts dcpf\n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-9c0c31f5-de16-468e-b8ff-3e4b4cbb637a
         a            dwt:SqlQuery ;
         dct:title    "Tops - Most Viewed Resources" ;
-        dwt:content  "# privateinstance\n# Tops - Most Viewed Resources\n# Last updated October, 2022\n\n###############################\n### metadata resource views ###\n###############################\nWITH metadata_views AS (\n    SELECT \n      org AS owner, resourcename AS resource, resourceid, resourcetype AS resource_type, SUM(views) AS pageviews \n      FROM daily_catalog_resources_pages_facts\n     GROUP BY owner, resourcename, resourceid, resource_type \n),\n################################\n### dataset or project views ###\n################################\nfiltered AS (\n    SELECT urlpath AS resource, COUNT(*) AS pageviews\n      FROM pageviews\n     WHERE REGEX(urlpath, '(/[a-z0-9-]*/[a-z0-9-]*)$')\n     GROUP BY resource\n),\ndataset_or_project_views AS (\n    SELECT \n           REGEXP_EXTRACT(resource, '/(.*)/.*') AS owner,\n           REGEXP_EXTRACT(resource, '/.*/(.*)') AS resource,\n           REGEXP_EXTRACT(resource, '/(.*)') AS resourceid,\n           'dataset_or_project' AS resource_type,\n           pageviews\n      FROM filtered\n    WHERE resource NOT LIKE CONCAT(REGEXP_EXTRACT(resource, '(.*)/.*'), '/', 'catalog')\n),\n#############################################\n### metadata and dataset-or-project views ###\n#############################################\nunioned AS (\n    SELECT * \n      FROM metadata_views\n        UNION \n    SELECT * \n      FROM dataset_or_project_views\n)\nSELECT *\n  FROM unioned \n ORDER BY pageviews DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-d7c4a282-1435-4491-999f-4f9cb2d2da0d
@@ -264,31 +264,31 @@
 :query-aa0d9c65-40a0-4445-ac12-24f86ebe26ad
         a            dwt:SqlQuery ;
         dct:title    "Resources - Snapshot Open Datasets And Projects" ;
-        dwt:content  "# privateinstance\n# Resources - Snapshot Open Datasets And Projects\n\nWITH temp AS (\n    SELECT COUNT(*) AS n_datasets_projects,\n           COUNT(*) FILTER(WHERE visibility = 'OPEN') AS n_open,\n           COUNT(*) FILTER(WHERE visibility = 'DISCOVERABLE') AS n_discoverable\n      FROM datasets\n)\n\nSELECT n_datasets_projects,\n       n_open,\n       n_discoverable,\n       ROUND(n_open / n_datasets_projects * 100, 1) AS pct_open,\n       ROUND(n_discoverable / n_datasets_projects * 100, 1) AS pct_discoverable,\n       ROUND((n_open + n_discoverable) / n_datasets_projects * 100, 1) AS pct_open_or_disc\n  FROM temp" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-08e2be12-3284-434a-9001-349be0a6c402
         a            dwt:SqlQuery ;
         dct:title    "Tops - Dataset Project Creation" ;
-        dwt:content  "# privateinstance\n# Tops - Dataset Project Creation\n# Last updated September, 2022\n\nWITH temp AS (\n    SELECT REGEXP_EXTRACT(createdby, '.*:(.*)') AS agentid, COUNT(created) AS n\n      FROM datasets\n     GROUP BY createdby\n)\nSELECT t.agentid, a.displayname, a.email, t.n AS datasets_created\n  FROM temp t\n       JOIN agents a\n       USING (agentid)\n ORDER BY datasets_created DESC\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-741e8409-73aa-4e3d-a86b-4cdd2d4d878f
         a            dwt:SqlQuery ;
         dct:title    "Visits - Return Visitors - Weekly" ;
-        dwt:content  "# privateinstance\n# Visits - Return Visitors - Weekly\n# Last updated September, 2022\n\nSELECT DATE_TRUNC(daf.date, 'week') AS week, COUNT(DISTINCT daf.agentid) AS return_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE type != 'new'\n       AND ar.email NOT LIKE '%@data.world'\n GROUP BY week\n ORDER BY week DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-75a82da0-9de9-471f-81a2-fdbb9ee2c904
         a            dwt:SqlQuery ;
         dct:title    "Visits - Adoption - Daily" ;
-        dwt:content  "# privateinstance\n# Visits - Adoption - Daily\n# Last updated September, 2022\n\nWITH daf_reduced AS (\n    SELECT DISTINCT daf.date, daf.type, daf.ui_events, daf.api_events, daf.agentid\n      FROM daily_agent_facts daf\n           JOIN agents_retention ar\n           USING (agentid)\n     WHERE ar.email NOT LIKE '%@data.world'\n),\nuser_days_temp AS (\n    SELECT date, COUNT(*) AS user_days\n      FROM daf_reduced\n     GROUP BY date\n),\nreturn_days_temp AS (\n    SELECT date, COUNT(*) AS return_days\n      FROM daf_reduced\n     WHERE type != 'new'\n     GROUP BY date\n),\nnew_days_temp AS (\n    SELECT date, COUNT(*) AS new_days\n      FROM daf_reduced\n     WHERE type = 'new'\n     GROUP BY date\n),\nrad AS (\n    SELECT DISTINCT daf.date, daf.agentid\n      FROM daily_agent_facts daf\n           JOIN agents_retention ar\n           USING (agentid)\n     WHERE daf.api_events + daf.ui_events > 10\n           AND daf.type != 'new'\n           AND ar.email NOT LIKE '%@data.world'\n),\nrads_grouped AS (\n    SELECT date, COUNT(*) AS rads\n      FROM rad\n     GROUP BY date\n)\nSELECT u.date,\n       IF(user_days IS NULL, 0, user_days) AS user_days,\n       IF(return_days IS NULL, 0, return_days) AS return_days,\n       IF(new_days IS NULL, 0, new_days) AS new_days,\n       ROUND(IF(new_days IS NULL, 0, new_days) / IF(user_days IS NULL, 0, user_days) * 100, 1) AS percent_new,\n       IF(rads IS NULL, 0, rads) AS rads,\n       ROUND(IF(rads IS NULL, 0, rads) / IF(user_days IS NULL, 0, user_days) * 100, 1) AS percent_rad\n  FROM user_days_temp u\n       FULL OUTER JOIN return_days_temp\n       USING (date)\n       FULL OUTER JOIN new_days_temp\n       USING (date)\n       FULL OUTER JOIN rads_grouped\n       USING (date)\n ORDER BY u.date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-637b2655-7bff-4ac3-9bc0-70696fd86d55
         a            dwt:SqlQuery ;
         dct:title    "Tops - Pageviews By Resource And Agentid" ;
-        dwt:content  "# privateinstance\r\n# Tops - Pageviews By Resource And Agentid\r\n# Last updated October, 2022\r\n\r\n###############################\r\n### metadata resource views ###\r\n###############################\r\nWITH metadata_views AS (\r\n    SELECT \r\n      agentid, org AS owner, resourcename AS resource, resourceid, resourcetype AS resource_type, SUM(views) AS pageviews \r\n      FROM daily_catalog_resources_pages_facts\r\n     GROUP BY agentid, owner, resourcename, resourceid, resource_type \r\n),\r\n################################\r\n### dataset or project views ###\r\n################################\r\nfiltered AS (\r\n    SELECT agentid, urlpath AS resource, COUNT(*) AS pageviews\r\n      FROM pageviews\r\n     WHERE REGEX(urlpath, '(/[a-z0-9-]*/[a-z0-9-]*)$')\r\n     GROUP BY agentid, resource\r\n),\r\ndataset_or_project_views AS (\r\n    SELECT agentid,\r\n           REGEXP_EXTRACT(resource, '/(.*)/.*') AS owner,\r\n           REGEXP_EXTRACT(resource, '/.*/(.*)') AS resource,\r\n           REGEXP_EXTRACT(resource, '/(.*)') AS resourceid,\r\n           'dataset_or_project' AS resource_type,\r\n           pageviews\r\n      FROM filtered\r\n    WHERE resource NOT LIKE CONCAT(REGEXP_EXTRACT(resource, '(.*)/.*'), '/', 'catalog')\r\n      AND agentid IS NOT NULL\r\n),\r\n#############################################\r\n### metadata and dataset-or-project views ###\r\n#############################################\r\nunioned AS (\r\n    SELECT * \r\n      FROM metadata_views\r\n        UNION \r\n    SELECT * \r\n      FROM dataset_or_project_views\r\n)\r\nSELECT *\r\n  FROM unioned \r\n ORDER BY pageviews DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-81674876-0b01-447b-814b-a7e936dc27dd
@@ -299,13 +299,13 @@
 :query-78c5afb0-af28-4fa7-a3a1-4507191974e6
         a            dwt:SqlQuery ;
         dct:title    "Events - Dataset or Project Views By Org" ;
-        dwt:content  "# privateinstance\n# Events - Dataset or Project Views By Org\n\nWITH filtered AS (\n    SELECT date,\n           REGEXP_EXTRACT(urlpath, '/(.*)/.*') AS owner,\n           REGEXP_EXTRACT(urlpath, '/.*/(.*)') AS resource\n     FROM pageviews\n     WHERE REGEX(urlpath, '(/[a-z0-9-]*/[a-z0-9-]*)$')\n           AND (raw:properties.title::STRING LIKE '%dataset%'\n           OR raw:properties.title::STRING LIKE '%project%')\n)\n\nSELECT owner AS org, COUNT(*) AS views\n  FROM filtered\n GROUP BY owner\n ORDER BY views DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-c4ee4c22-2329-41e1-b5b8-a1b47ea69941
         a            dwt:SqlQuery ;
         dct:title    "Membership - Daily" ;
-        dwt:content  "# privateinstance\n# Membership - Daily\n# Last updated September, 2022\n\nSELECT date, provisioned_agents AS members\n  FROM customer_daily_facts\n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-3b1101a5-c3ba-402e-9e98-1b34c107a64a
@@ -321,7 +321,7 @@
 :query-9c18c720-90f7-4c04-ab1f-abeab28d1ffc
         a            dwt:SqlQuery ;
         dct:title    "Visits - Avg Visits Weekly" ;
-        dwt:content  "# privateinstance\n# Visits - Avg Visits Weekly\n# Last updated September, 2022\n\nWITH weekly_active_days_by_user AS (\n    SELECT DISTINCT DATE_TRUNC(daf.date, 'week') AS week, daf.agentid, COUNT(*) AS weekly_active_days, 1 AS n_weeks\n      FROM daily_agent_facts daf\n           JOIN agents_retention ar\n           USING (agentid)\n     WHERE ar.email NOT LIKE '%@data.world'\n     GROUP BY week, daf.agentid\n)\nSELECT week,\n       SUM(weekly_active_days) weekly_user_days,\n       COUNT(DISTINCT agentid) unique_visitors,\n       ROUND(SUM(weekly_active_days) / SUM(n_weeks), 1) AS avg_visits_per_week\n  FROM weekly_active_days_by_user\n GROUP BY week\n ORDER BY week DESC\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-2813b714-30a4-4d24-9182-c6de6014d89d
@@ -332,13 +332,13 @@
 :query-3a97ba08-6f90-48cf-bf29-181ad8d87889
         a            dwt:SqlQuery ;
         dct:title    "Visits - CRADs By Agentid By Day" ;
-        dwt:content  "# privateinstance\n# Visits - CRADs By Agentid By Day\n# Last updated September, 2022\n\n    SELECT DISTINCT daf.date, daf.agentid, daf.ui_events, daf.api_events\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE daf.api_events + daf.ui_events > 10\n       AND daf.type != 'new'\n       AND ar.email NOT LIKE '%@data.world'\n ORDER BY daf.date DESC\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-7e0faa23-3966-436d-bae7-16f45714fb4c
         a            dwt:SqlQuery ;
         dct:title    "Visits - Return Visitors - Monthly" ;
-        dwt:content  "# privateinstance\n# Visits - Return Visitors - Monthly\n# Last updated September, 2022\n\nSELECT DATE_TRUNC(daf.date, 'month') AS month, COUNT(DISTINCT daf.agentid) AS return_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE daf.type != 'new'\n       AND ar.email NOT LIKE '%@data.world'\n GROUP BY month\n ORDER BY month DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :agent-data-catalog-team
@@ -348,7 +348,7 @@
 :query-5733624a-43eb-4613-815e-f2e49354b443
         a            dwt:SqlQuery ;
         dct:title    "Visits - Unique Visitor Days" ;
-        dwt:content  "# privateinstance\n# Visits - Unique Visitor Days\n# Last updated September, 2022\n\nSELECT daf.date, daf.agentid, ar.email, ar.displayname\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n ORDER BY date DESC, agentid" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-19e1bf02-b3ec-4ce5-8f1b-a27b4603f721
@@ -384,13 +384,13 @@
 :query-e09ce3e5-4d2d-4bae-91b7-738ea58836e0
         a            dwt:SqlQuery ;
         dct:title    "Visits - Unique Visitors - Daily" ;
-        dwt:content  "# privateinstance\n# Visits - Unique Visitors - Daily \n# Last updated September, 2022\n\nWITH temp AS (\n    SELECT daf.date, daf.agentid, daf.pageviews\n      FROM daily_agent_facts daf\n           JOIN agents_retention ar\n           USING (agentid)\n     WHERE ar.email NOT LIKE '%@data.world'\n),\ntemp_unique_visitors AS (\n    SELECT date, COUNT(*) AS unique_visitors\n      FROM temp\n     GROUP BY date\n),\ntemp_single_pageview AS (\n    SELECT date, COUNT(*) AS n_single_pageview\n      FROM temp\n     WHERE pageviews = 1\n     GROUP BY date\n)\nSELECT date, unique_visitors, n_single_pageview, n_single_pageview / unique_visitors * 100 AS pct_single_pageview\n  FROM temp_unique_visitors\n       JOIN temp_single_pageview\n       USING (date)\n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-86fd84f4-7d3c-4d22-8ba5-7514f02ec460
         a            dwt:SqlQuery ;
         dct:title    "Visits - CRADs By Day" ;
-        dwt:content  "# privateinstance\n# Visits - CRADs By Day\n# Last updated September, 2022\n\nWITH temp AS (\n    SELECT DISTINCT daf.date, daf.agentid\n      FROM daily_agent_facts daf\n           JOIN agents_retention ar\n           USING (agentid)\n     WHERE daf.api_events + daf.ui_events > 10\n           AND daf.type != 'new'\n           AND ar.email NOT LIKE '%@data.world'\n)\n\nSELECT date, COUNT(*) AS rads\n  FROM temp\n GROUP BY date\n ORDER BY date DESC\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-a3c69bf1-e170-441f-9f00-101a57ad1572
@@ -406,7 +406,7 @@
 :query-9b0d8fef-2afd-4380-91f9-8405eea9b71a
         a            dwt:SqlQuery ;
         dct:title    "Resources - Projects" ;
-        dwt:content  "# privateinstance\n# Resources - Projects\n# Last updated September, 2022\n\n SELECT DISTINCT d.agentid AS owner, d.datasetid AS resource,\n       CONCAT(d.agentid, '/', d.datasetid) AS resourceid,\n       d.headline AS description, d.abstract AS summary,\n       REGEXP_EXTRACT(d.createdby, \"(.*):(.*)\", 2) AS createdby_agentid,\n       a.displayname AS createdby_displayname,\n       a.email AS createdby_email,\n       REGEXP_EXTRACT(d.createdby, \"(.*):(.*)\", 1) AS createdby_client,\n       CAST(d.created AS DATE) AS created, CAST(d.updated AS DATE) AS updated,\n       d.visibility, d.tags, d.notificationsEmail\n  FROM datasets d\n       LEFT JOIN agents_retention a\n       ON REGEXP_EXTRACT(d.createdby, \"(.*):(.*)\", 2) = a.agentid\n WHERE d.project = true" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-bf5e22eb-3100-4891-9375-5f2930415c1f
@@ -417,7 +417,7 @@
 :query-77cd333a-1cb7-4c00-9026-f72a710038d5
         a            dwt:SqlQuery ;
         dct:title    "Events - Dataset Activity - By Day" ;
-        dwt:content  "# privateinstance\n# Events - Dataset Activity - By Day\n\nSELECT date, ownerid as owner, datasetid AS resource, CONCAT(ownerid, '/', datasetid) AS resourceid,\n       queries_run, queries_saved, downloads, pageviews, bookmarks, auth_requests\n  FROM daily_dataset_facts ddf\n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-c1dc99c5-85e7-40a1-abbe-aad3633bc4b3
@@ -428,7 +428,7 @@
 :query-90c2e19b-8a82-488c-882c-393f4d4a5a0f
         a            dwt:SqlQuery ;
         dct:title    "Resources - Queries" ;
-        dwt:content  "# privateinstance\n# Resources - Queries\n\nWITH temp AS (\n    SELECT partyid AS createdby, resourcetype, type AS querytype, name AS query_name,\n           REGEXP_EXTRACT(resourceid, \"(.*)/(.*)\", 1) AS owner,\n           REGEXP_EXTRACT(resourceid, \"(.*)/(.*)\", 2) AS resource_id,\n           created\n      FROM queries\n)\nSELECT temp.query_name, temp.querytype, temp.createdby,\n       temp.resourcetype, temp.owner, temp.resource_id AS resource,\n       concat (temp.owner, '/', temp.resource_id) as resourceid, \n       cast(temp.created as date) as created_date\n  FROM temp\n ORDER BY created_date DESC" ;
+	dwt:content  "# privateinstance\n# Resources - Queries\n\nWITH temp AS (\n    SELECT partyid AS createdby, resourcetype, type AS querytype, name AS query_name,\n           REGEXP_EXTRACT(resourceid, \"(.*)/(.*)\", 1) AS owner,\n           REGEXP_EXTRACT(resourceid, \"(.*)/(.*)\", 2) AS resource_id,\n           created\n      FROM queries\n)\nSELECT temp.query_name, temp.querytype, temp.createdby,\n       temp.resourcetype, temp.owner, temp.resource_id AS resource,\n       concat (temp.owner, '/', temp.resource_id) as resourceid, \n       cast(temp.created as date) as created_date\n  FROM temp\n ORDER BY created_date DESC" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :dataset-data-catalog-team_ddw-metrics-solutions
@@ -445,7 +445,7 @@
 :query-8f2de6db-2cb3-40b1-9918-50bea4c12f07
         a            dwt:SqlQuery ;
         dct:title    "Events - Downloads" ;
-        dwt:content  "# privateinstance\n# Events - Downloads\n# Last updated September, 2022\n\n WITH parsed AS (SELECT date, agentid, type, owner, resourceid AS resource, CONCAT(owner, '/', resourceid) AS resourceid_tmp,filename, filelabels  FROM downloads)\n  SELECT p.date, p.agentid, p.type, p.owner, p.resource, p.resourceid_tmp AS resourceid, p.filename, p.filelabels, email, displayname\n       FROM parsed p\n JOIN agents_retention\n   USING (agentid)\n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-cd2707f2-e848-48e2-8df1-e42435dc9265
@@ -476,7 +476,7 @@
 :query-0704895d-6f4d-4762-8766-855dcd19db28
         a            dwt:SqlQuery ;
         dct:title    "Visits - Unique Visitors - Quarterly" ;
-        dwt:content  "# privateinstance\n# Visits - Unique Visitors - Quarterly\n# Last updated September, 2022\n\n    SELECT DATE_TRUNC(daf.date, 'quarter') AS quarter, COUNT(DISTINCT daf.agentid) AS unique_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE ar.email NOT LIKE '%@data.world'\n GROUP BY quarter\n ORDER BY quarter DESC\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-102e94df-a9a8-41b0-9ac2-82bfe139d665
@@ -487,13 +487,13 @@
 :query-0911f224-c38e-4730-9e25-f96759ea9d70
         a            dwt:SqlQuery ;
         dct:title    "Membership - By Date" ;
-        dwt:content  "# privateinstance\n# Membership - By Date\n# Last updated September, 2022\n\nSELECT date, agentid, email, displayname\n  FROM provisioned_seats_by_date\n ORDER BY date DESC, agentid" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-858cc92f-eb8b-4e10-a4d5-a2911a0b815d
         a            dwt:SqlQuery ;
         dct:title    "Visits - Return Visitors - Quarterly" ;
-        dwt:content  "# privateinstance\n# Visits - Return Visitors - Quarterly\n\nSELECT DATE_TRUNC(daf.date, 'quarter') AS quarter, COUNT(DISTINCT daf.agentid) AS return_visitors\n  FROM daily_agent_facts daf\n       JOIN agents_retention ar\n       USING (agentid)\n WHERE daf.type != 'new'\n       AND ar.email NOT LIKE '%@data.world'\n GROUP BY quarter\n ORDER BY quarter DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-ba58984d-ad99-4d64-a2f2-258f2fc5cdff
@@ -514,19 +514,19 @@
 :query-c3f85081-6dbd-4076-b1ee-6804ac28a90e
         a            dwt:SqlQuery ;
         dct:title    "Events - Bookmarks" ;
-        dwt:content  "# privateinstance\n# Events - Bookmarks\n# Last updated October, 2022\n\nWITH catalogresources AS (\n  SELECT \n    created::DATE AS date\n    , partyid AS agentid\n    , REGEXP_EXTRACT(resource, '[^:]*:[^/]*/([^/]*)/.*') AS owner\n    , resourceid\n    , resourcetype AS bookmarked_resourcetype\n  FROM likes \n  WHERE resourcetype = 'catalogResource'\n),\ncomments AS (\n  SELECT \n    created::DATE AS date\n    , partyid AS agentid\n    , REGEXP_EXTRACT(resource, '[^/]*/([^/]*)/.*') AS owner\n    , REGEXP_EXTRACT(resource, '[^/]*/(.*)') AS resourceid\n    , resourcetype AS bookmarked_resourcetype\n  FROM likes  \n  WHERE resourcetype = 'comment'\n),\ndatasetinsights AS (\n  SELECT \n    created::DATE AS date\n    , partyid AS agentid\n    , REGEXP_EXTRACT(resource, '[^:]*:([^/]*)/.*') AS owner\n    , resourceid\n    , resourcetype AS bookmarked_resourcetype\n  FROM likes\n  WHERE resourcetype = 'datasetInsight'\n),\ndatasets AS (\n  SELECT \n    created::DATE AS date\n    , partyid AS agentid\n    , REGEXP_EXTRACT(likes.resourceid, '(.*)/.*') AS owner\n    , resourceid\n    , resourcetype AS bookmarked_resourcetype\n  FROM likes  \n WHERE resourcetype = 'dataset'\n),\nunioned AS (\n    SELECT *\n    FROM catalogresources \n        UNION\n    SELECT *\n    FROM comments\n        UNION\n    SELECT *\n    FROM datasetinsights\n        UNION\n    SELECT *\n    FROM datasets\n),\nadd_email AS (\n  SELECT \n    u.date \n    , u.agentid\n    , a.displayname\n    , a.email\n    , u.owner\n    , u.resourceid\n    , u.bookmarked_resourcetype  \n  FROM unioned u LEFT JOIN agents a\n  USING (agentid)\n)\n\nSELECT *\nFROM add_email\nORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-592c690d-bc2c-4625-95a9-46907a78cb30
         a            dwt:SqlQuery ;
         dct:title    "Resources - Datasets" ;
-        dwt:content  "# privateinstance\n# Resources - Datasets \n# Last updated September, 2022\n\nSELECT DISTINCT d.agentid AS owner, d.datasetid AS resource,\n       CONCAT(d.agentid, '/', d.datasetid) AS resourceid,\n       d.headline AS description, d.abstract AS summary,\n       REGEXP_EXTRACT(d.createdby, \"(.*):(.*)\", 2) AS createdby_agentid,\n       a.displayname AS createdby_displayname,\n       a.email AS createdby_email,\n       REGEXP_EXTRACT(d.createdby, \"(.*):(.*)\", 1) AS createdby_client,\n       CAST(d.created AS DATE) AS created, CAST(d.updated AS DATE) AS updated,\n       d.visibility, d.tags, d.notificationsEmail\n  FROM datasets d\n       LEFT JOIN agents a\n       ON REGEXP_EXTRACT(d.createdby, \"(.*):(.*)\", 2) = a.agentid\n WHERE (d.project IS NULL OR d.project = FALSE)\n    \n\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-e008c0eb-5d9e-4b6c-9701-933a739ba860
         a            dwt:SqlQuery ;
         dct:title    "Resources - Live Metadata Assets Created - By Day" ;
-        dwt:content  "# privateinstance\n# Resources - Live Metadata Assets Created - By Day\n\nSELECT date, owner, asset, live_assets_created, total_assets_created, cumulative_total_assets, cumulative_live_assets\nFROM daily_dwec_asset_facts \nORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-bc4f1cc1-01a0-4555-b921-31adea83951a
@@ -552,7 +552,7 @@
 :query-fe5673e8-50fb-4825-a44a-3023f548c058
         a            dwt:SqlQuery ;
         dct:title    "Events - Catalog Resources Approved Or Denied Suggestions - By Day" ;
-        dwt:content  "# privateinstance\n# Events - Catalog Resources Approved Or Denied Suggestions - By Day\n\nSELECT date, org AS owner, agentid as responder, requester, resourcename, resourceid as resource, resourcetype, suggestions_approved, suggestions_denied \n  FROM daily_catalog_resources_pages_facts dcpf\n WHERE suggestions_approved > 0 OR suggestions_denied > 0 \n ORDER BY date DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :dataset-data-catalog-team_baseplatformdata
@@ -565,19 +565,19 @@
 :query-d8d85bba-e558-4df9-ac1d-a111e577a614
         a            dwt:SqlQuery ;
         dct:title    "Tops - Most Comments - All Time" ;
-        dwt:content  "# privateinstance\n# Tops - Most Comments - All Time\n\nWITH results AS (\n    SELECT resourcetype,\n           CASE resourcetype\n             WHEN = \"datasetInsight\" THEN REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)/(.*)\", 2)\n             ELSE REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)\", 2)\n           END AS resource_agentid,\n           CASE resourcetype\n             WHEN = \"datasetInsight\" THEN REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)/(.*)\", 3)\n             ELSE REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)\", 3)\n           END AS resourceid,\n           CASE resourcetype\n             WHEN = \"datasetInsight\" THEN REGEXP_EXTRACT(resource, \"(.*):(.*)/(.*)/(.*)\", 4)\n             ELSE NULL\n           END AS subresourceid,\n           topicid, commentid, resourceversion, created, createdby, updated, updatedby, resource\n      FROM comments\n)\n\nSELECT resourcetype, resource_agentid as owner, resourceid as resource, \n       concat(resource_agentid, '/', resourceid) as resourceid,\n       COUNT(*) AS comments\n  FROM results\n GROUP BY resourcetype, resource_agentid, resourceid\n ORDER BY comments DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-44050ea3-b083-4eaf-b9fa-6329c4ac03c6
         a            dwt:SqlQuery ;
         dct:title    "Resources - Database Connections" ;
-        dwt:content  "# privateinstance\n# Resources - Database Connections\n# Last updated September, 2022\n\nSELECT DISTINCT\n       databasesources.label AS database_connection_label,\n       databasesources.type AS database_connection_type,\n       databasesources.agentid AS connection_agentid,\n       ar.displayname AS connection_agent_displayname,\n       ar.email AS connection_agent_email,\n       CAST(databasesources.created AS DATE) AS connection_created,\n       databasesources.createdby AS connection_createdby,\n       CAST(databasesources.updated AS DATE) AS connection_updated,\n       databasesources.updatedby AS connection_updatedby\n  FROM databasesources\n       LEFT JOIN agents ar\n       USING (agentid)\n ORDER BY databasesources.created DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-07b42c60-d1ad-4e24-80bf-52e14c62b975
         a            dwt:SqlQuery ;
         dct:title    "Events - Pageviews - Last 90 Days" ;
-        dwt:content  "# privateinstance\n# Events - Pageviews - Last 90 Days\n# Last updated September, 2022\n\nSELECT p.date, p.ts, p.agentid, a.email, \"pageview\" AS action, p.urlpath, p.raw:context.page.referrer::STRING as referrer\n  FROM pageviews p\n    JOIN agents_retention a\n      USING (agentid)\n WHERE p.agentid IS NOT NULL\n       AND DATE_DIFF(p.date, CAST(NOW() AS DATE), \"day\") <= 90\n ORDER BY p.ts DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-f79a5682-f18d-486f-9f5d-bbb8d746e694
@@ -588,7 +588,7 @@
 :query-d5852a17-72cd-48a8-8648-f8c38c9158e7
         a            dwt:SqlQuery ;
         dct:title    "Tops - Most Requested Resources" ;
-        dwt:content  "# privateinstance\n# Tops - Most Requested Resources\n# Last updated September, 2022\n\nSELECT REGEXP_EXTRACT(a.resourceid, '(.*)/.*') AS owner,\n       REGEXP_EXTRACT(a.resourceid, '.*/(.*)') AS resource,\n       a.resourceid,\n       a.resourcetype,\n       COUNT(*) AS requests\n  FROM authorizationrequests_retention a\n GROUP BY a.resourceid, a.resourcetype\n ORDER BY requests DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-77e70936-5199-48c3-97d2-0a8ad40473ab
@@ -613,7 +613,7 @@
 :query-34ea07b2-6b2f-43f2-9d1c-b6067b3cf54d
         a            dwt:SqlQuery ;
         dct:title    "Visits - Snapshot Repeat Visitors" ;
-        dwt:content  "# privateinstance\n# Visits - Snapshot Repeat Visitors\n# Last updated September, 2022\n\nWITH temp AS (\n    SELECT daf.date, daf.agentid, daf.type\n      FROM daily_agent_facts daf\n           JOIN agents_retention ar\n           USING (agentid)\n     WHERE ar.email NOT LIKE '%@data.world'\n),\nallvisitors AS (\n    SELECT COUNT(DISTINCT agentid) AS all_visitors, \"temp\" AS temp\n      FROM temp\n),\nreturnvisitors AS (\n    SELECT COUNT(DISTINCT agentid) AS return_visitors, \"temp\" AS temp\n      FROM temp\n     WHERE type != 'new'\n)\nSELECT all_visitors, return_visitors, ROUND(return_visitors / all_visitors * 100, 1) AS pct_returned\n  FROM allvisitors\n       JOIN returnvisitors\n       USING (temp)\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-0859aa4d-b602-4216-b5c5-fa366d0f2663
@@ -629,13 +629,13 @@
 :query-614f3c0c-bb51-4f89-8d25-792c0583949e
         a            dwt:SqlQuery ;
         dct:title    "Tops - Most Searched Terms" ;
-        dwt:content  "# privateinstance\n# Tops - Most Searched Terms\n\nSELECT search_value, search_type, SUM(search_count) AS n\n  FROM daily_search_facts\n GROUP BY search_value, search_type\n ORDER BY n DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-06db6448-bc7b-4c2f-829d-402e99c1776a
         a            dwt:SqlQuery ;
         dct:title    "Tops - Bookmarks" ;
-        dwt:content  "# privateinstance\n# Tops - Bookmarks\n# Last updated September, 2022\n\nSELECT l.partyid as agentid, a.displayname, a.email, count(*) as bookmarks\nFROM likes l \n  JOIN agents a\n    ON l.partyid = a.agentid\ngroup by l.partyid, a.displayname, a.email\norder by bookmarks desc " ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-cbb3d7d0-76b7-4e2d-958a-a2be8981064d
@@ -651,7 +651,7 @@
 :query-1f1781db-0571-45dc-abb8-956e6657eb13
         a            dwt:SqlQuery ;
         dct:title    "Resources - Followers" ;
-        dwt:content  "# privateinstance\n# Resources - Followers \n# Last updated September, 2022\n\nSELECT f.following, f.agentid, cast(f.created as date) as created,\n       a.displayname, a.email, a.company, a.bio\n  FROM follows f\n       JOIN agents a\n       USING (agentid)\n ORDER BY created DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :file-3c2591b7-da49-47bd-b285-1d03eb71b445
@@ -677,29 +677,29 @@
 :query-a9f21bb3-6a47-4b39-b795-0fee99d97c25
         a            dwt:SqlQuery ;
         dct:title    "Resources - Orgs" ;
-        dwt:content  "# privateinstance\n# Resources - Orgs\n\nSELECT agentid as orgname, displayname, cast(created as date) as created, createdby, cast(updated as date) as updated,\n       updatedby, website, bio, allowedroles\n       FROM agents\nwhere orgmode=True" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-6836012f-0cce-4628-b0ae-355bd2fa65da
         a            dwt:SqlQuery ;
         dct:title    "Visits - New Users By Month" ;
-        dwt:content  "# privateinstance\n# Visits - New Users By Month\n# Last updated September, 2022\n\nWITH temp AS (\n    SELECT created::DATE AS date_temp\n      FROM agents_retention\n     WHERE email NOT LIKE '%@data.world'\n           AND (orgmode IS NULL OR orgmode = FALSE)\n),\ntemp2 AS (\n    SELECT DATE_TRUNC(date_temp, 'month') AS month, COUNT(*) AS new_users\n      FROM temp\n     GROUP BY month\n     ORDER BY month DESC\n)\nSELECT *\n  FROM temp2" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-4411373c-aaa7-4e39-a2d8-27915367f702
         a            dwt:SqlQuery ;
         dct:title    "Membership - Current" ;
-        dwt:content  "# privateinstance\n# Membership - Current\n# Last updated September, 2022\n\nWITH org_people AS (\n    SELECT\n           displayname,\n           agentid,\n           email,\n           created::DATE AS onboarddate\n      FROM agents\n     WHERE orgmode IS NULL OR orgmode = FALSE\n),\nlastly AS (\n    SELECT DISTINCT op.displayname, op.agentid, op.email, MIN(daf.date) AS startdate,\n           MAX(daf.date) AS lastseen, op.onboarddate AS onboard_date,\n           SUM(daf.api_events) AS api_events, SUM(daf.ui_events) AS ui_events,\n           SUM(daf.pageviews) AS pageviews, SUM(daf.queries_created) AS queries_created,\n           SUM(daf.datasets_created) AS datasets_created, SUM(daf.projects_created) AS projects_created,\n           SUM(daf.downloads) AS downloads\n      FROM org_people op\n           LEFT JOIN daily_agent_facts daf\n           USING (agentid)\n     GROUP BY displayname, agentid, email, onboarddate\n)\nSELECT *\n  FROM lastly\n ORDER BY lastseen DESC\n\n" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-19ea5566-17a6-45ce-bed6-656af6872112
         a            dwt:SqlQuery ;
         dct:title    "Resources - Dataset Files" ;
-        dwt:content  "# privateinstance\n# Resources - Dataset Files\n\nSELECT f.agentid AS owner,\n       datasetid AS resource,\n       CONCAT(f.agentid, '/', datasetid) AS resourceid,\n       dataset_name,\n       file_name,\n       file_created_time,\n       file_created_time::DATE AS file_created_date,\n       REGEXP_EXTRACT(file_createdby, '(.*):.*') AS file_createdby_client,\n       REGEXP_EXTRACT(file_createdby, '.*:(.*)') AS file_createdby_agentid,\n       file_materialized_or_virtualized,\n       is_file_discoverable,\n       file_size_in_bytes\n  FROM files_from_latest_dataset_dim f\n ORDER BY file_created_time DESC" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
 
 :query-24c70519-cbe7-4a89-a968-a6315db171a1
         a            dwt:SqlQuery ;
         dct:title    "Events - Queries" ;
-        dwt:content  "# privateinstance\n# Events - Queries\n\nSELECT *\n  FROM query_audit WHERE ts::DATE >= DATE_ADD(NOW()::DATE, -90, 'day')" ;
+	dwt:content  "" ;
         dwt:owner    :project-data-catalog-team_ddw-metrics-etl-solutions .
