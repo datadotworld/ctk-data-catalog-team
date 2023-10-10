@@ -37,11 +37,12 @@ commands:
   # Steps to deploy Data Catalog Team
   preprocessing_python_scripts: &preprocessing_python_scripts
     steps:
+      ## Download latest dwt and build jar file in docker
       - checkout
       - run:
           ## Preprocessing steps
           name: Create required projects in advance
-          commands: |
+          command: |
             cd ~/project/utility-scripts/
             python3 --version
             sudo apt-get update
@@ -57,7 +58,7 @@ commands:
       - run:
           ## General commands to deploy Data Catalog Team
           name: Private instance install data catalog team metrics
-          commands: |
+          command: |
             cd ~/project
             mkdir ~/.dwt
             mkdir ~/.dwt/template
