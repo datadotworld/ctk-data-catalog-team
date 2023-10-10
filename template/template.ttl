@@ -343,7 +343,7 @@
 
 :agent-data-catalog-team
         a               dwt:Agent ;
-        dct:identifier  "data-catalog-team" .
+        dct:identifier  "{{dataCatalogTeamIdentifier}}" .
 
 :query-5733624a-43eb-4613-815e-f2e49354b443
         a            dwt:SqlQuery ;

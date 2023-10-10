@@ -1,0 +1,100 @@
+version: 2.1
+orbs:
+  python: circleci/python@2.1.1
+
+resources:
+  env_vars: &env_vars
+    BASH_ENV: ~/.env
+    MULTI_TENANT_API_URL: api.data.world
+    PRIVATE_INSTANCE_API_URL: api.data.world
+    PRERELEASE_PREFIX: prerelease ## Will: Do we need this?
+    RELEASE_PREFIX: release ## Will: Do we need this?
+
+  defaults: &defaults
+    environment:
+      << : *env_vars
+    docker:
+      - image: cimg/openjdk:15.0.1
+
+  dwt_setup: &dwt_setup
+    environment:
+      << : *env_vars
+    docker:
+      - image: cimg/openjdk:15.0.1
+  
+  sync_setup: &sync_setup
+    environment:
+      << : *env_vars
+    docker:
+      - image: cimg/python:3.11.1
+
+  main_only: &main_only
+    filters:
+      branches:
+        only: main
+
+commands:
+  # Steps to deploy Data Catalog Team
+  preprocessing_python_scripts: &preprocessing_python_scripts
+    steps:
+      - checkout
+      - run:
+          ## Preprocessing steps
+          name: Create required projects in advance
+          commands: |
+            cd ~/project/utility-scripts/
+            python3 --version
+            sudo apt-get update
+            sudo apt-get -y install python3-pip
+            pip3 --version
+            sudo pip3 install requests python-dotenv
+            echo "Creating CTK Data Catalog Team projects before running DWT commands." 
+            python3 CreateProjectsAndDatasetsForOrg.py
+          
+
+  run_commands_data_catalog_team_deploy: &run_commands_data_catalog_team_deploy
+    steps:
+      - run:
+          ## General commands to deploy Data Catalog Team
+          name: Private instance install data catalog team metrics
+          commands: |
+            cd ~/project
+            mkdir ~/.dwt
+            mkdir ~/.dwt/template
+            cp dwt_ctk_data_catalog_team_scripts/generate_ctk-data-catalog-team.sh ~/.dwt/generate_ctk-data-catalog-team.sh
+            python3 FromQueriesToTemplate.py template/ template/
+            cp -R template/data-catalog-team ~/.dwt/template
+            cp template/template.ttl ~/.dwt/template/template.ttl
+            cp template/customer_config/cc_variables_${CUSTOMER_DATA_CATALOG_TEAM}.properties ~/.dwt/template
+            cp bin/dwt-0.2.jar ~/.dwt/dwt.jar
+            cd ~/.dwt/
+            chmod +x generate_ctk-data-catalog-team.sh
+            export DW_API_URL=$PRIVATE_INSTANCE_CUSTOMER_API_URL
+            export DW_AUTH_TOKEN=$CUSTOMER_API_TOKEN
+            echo "Deploying Data Catalog team for customer: $CUSTOMER_DATA_CATALOG_TEAM"
+            ./generate_ctk-data-catalog-team.sh $CUSTOMER_DATA_CATALOG_TEAM
+
+jobs:
+  ## Customer jobs
+  deploy_data_catalog_team_solutions_jay:
+    <<: *dwt_setup
+    steps:
+      - run:
+          commands |
+            echo CUSTOMER_DATA_CATALOG_TEAM="solutions-jay-data-catalog-team" >> ~/.env
+            echo PRIVATE_INSTANCE_CUSTOMER_API_URL=api.data.world >> ~/.env
+            echo CUSTOMER_API_TOKEN=$SOLUTIONS_JAY_SERVICE_ACCOUNT_TOKEN >> ~/.env
+      - preprocessing_python_scripts
+      - run_commands_data_catalog_team_deploy
+  
+workflows:
+  version: 2.1
+
+  # Initial set up of CTK-DATA-CATALOG-TEAM
+  DCT-inital-deployment:
+    jobs:
+      - deploy_data_catalog_team_solutions_jay:
+          filters:
+            branches:
+              only: main
+
