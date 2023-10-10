@@ -81,7 +81,7 @@ jobs:
     <<: *dwt_setup
     steps:
       - run:
-          commands |
+          command: |
             echo CUSTOMER_DATA_CATALOG_TEAM="solutions-jay-data-catalog-team" >> ~/.env
             echo PRIVATE_INSTANCE_CUSTOMER_API_URL=api.data.world >> ~/.env
             echo CUSTOMER_API_TOKEN=$SOLUTIONS_JAY_SERVICE_ACCOUNT_TOKEN >> ~/.env
