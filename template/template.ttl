@@ -598,7 +598,7 @@
 
 :project-data-catalog-team_ddw-metrics-etl-solutions
         a                  dwt:Project ;
-        dct:description    "Queries to generate customer-facing metrics. For customer with customer ID: solutions" ;
+        dct:description    "Queries to generate customer-facing metrics." ;
         dct:identifier     "ddw-metrics-etl-solutions" ;
         dct:title          "DDW Metrics Etl Solutions" ;
         dwt:linkedDataset  :dataset-data-catalog-team_baseplatformdata ;
